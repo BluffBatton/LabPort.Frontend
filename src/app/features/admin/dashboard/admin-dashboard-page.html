@@ -1,0 +1,104 @@
+<section class="admin-dashboard">
+  <header class="page-heading">
+    <div>
+      <span>{{ i18n.t('common.admin') }}</span>
+      <h2>{{ i18n.t('pages.adminDashboard.title') }}</h2>
+      <p>{{ i18n.t('pages.adminDashboard.description') }}</p>
+    </div>
+
+    <div class="page-actions">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ i18n.t('admin.dashboard.window') }}</mat-label>
+        <mat-select [value]="days()" (selectionChange)="setDays($event.value)">
+          @for (option of dayOptions; track option) {
+            <mat-option [value]="option">{{ option }} {{ i18n.t('admin.dashboard.days') }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
+        {{ i18n.t('admin.dashboard.refresh') }}
+      </button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-row">
+      <mat-progress-spinner mode="indeterminate" diameter="28" />
+      <span>{{ i18n.t('admin.dashboard.loading') }}</span>
+    </div>
+  }
+
+  <div class="metric-grid">
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('admin.dashboard.totalUsers') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('admin', 'dashboard') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <strong>{{ metric(stats()?.totalUsers) }}</strong>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('admin.dashboard.activeUsers') }}</mat-card-title>
+        <mat-card-subtitle>{{ i18n.t('admin.dashboard.window') }}: {{ metric(stats()?.daysWindow) }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <strong>{{ metric(stats()?.activeUsersLastNDays) }}</strong>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('admin.dashboard.totalSamples') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('admin', 'dashboard') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <strong>{{ metric(stats()?.totalSamples) }}</strong>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('admin.dashboard.totalTests') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('admin', 'dashboard') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <strong>{{ metric(stats()?.totalTests) }}</strong>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('admin.dashboard.totalAlerts') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('admin', 'dashboard') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <strong>{{ metric(stats()?.totalAlerts) }}</strong>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  @if (!loading() && !stats() && !endpointErrors().length) {
+    <mat-card appearance="outlined" class="empty-card">
+      <mat-card-content>{{ i18n.t('admin.dashboard.empty') }}</mat-card-content>
+    </mat-card>
+  }
+
+  @if (endpointErrors().length) {
+    <mat-card appearance="outlined" class="error-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('admin.dashboard.endpointErrors') }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set aria-label="Admin dashboard endpoint errors">
+          @for (error of endpointErrors(); track error) {
+            <mat-chip>{{ error }}</mat-chip>
+          }
+        </mat-chip-set>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

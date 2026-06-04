@@ -1,0 +1,96 @@
+.admin-dashboard {
+  display: grid;
+  gap: 22px;
+}
+
+.page-heading {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  justify-content: space-between;
+  max-width: 1240px;
+}
+
+.page-heading div {
+  display: grid;
+  gap: 8px;
+}
+
+.page-heading span {
+  color: var(--lp-admin);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.page-heading h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 650;
+}
+
+.page-heading p,
+.loading-row {
+  margin: 0;
+  color: var(--lp-text-muted);
+}
+
+.page-actions,
+.loading-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.page-actions mat-form-field {
+  width: 170px;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  max-width: 1240px;
+}
+
+mat-card {
+  border-color: var(--lp-border);
+}
+
+mat-card-content {
+  display: grid;
+  gap: 8px;
+  padding-top: 16px;
+}
+
+mat-card-content strong {
+  font-size: 32px;
+  font-weight: 650;
+}
+
+.empty-card,
+.error-card {
+  max-width: 1240px;
+}
+
+.empty-card {
+  background: var(--lp-surface-muted);
+}
+
+.error-card {
+  border-color: #ead8ad;
+  background: #fff8e6;
+}
+
+@media (max-width: 860px) {
+  .page-heading,
+  .page-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .page-actions mat-form-field {
+    width: 100%;
+  }
+}

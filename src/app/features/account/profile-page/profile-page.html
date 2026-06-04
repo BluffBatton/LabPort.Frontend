@@ -1,0 +1,152 @@
+<section class="profile-page">
+  <header class="page-heading">
+    <div>
+      <span>{{ i18n.t('common.appName') }}</span>
+      <h2>{{ i18n.t('pages.profile.title') }}</h2>
+      <p>{{ i18n.t('pages.profile.description') }}</p>
+    </div>
+
+    <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
+      {{ i18n.t('profile.refresh') }}
+    </button>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-row">
+      <mat-progress-spinner mode="indeterminate" diameter="28" />
+      <span>{{ i18n.t('profile.loading') }}</span>
+    </div>
+  }
+
+  <div class="content-grid">
+    <mat-card appearance="outlined" class="summary-card">
+      <mat-card-header>
+        <mat-card-title>{{ fullName() }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('user', 'profile') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="detail-grid">
+          <div>
+            <span>{{ i18n.t('profile.identifier') }}</span>
+            <strong>{{ profile()?.id || '-' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('profile.role') }}</span>
+            <strong>{{ profile()?.role || '-' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('profile.createdAt') }}</span>
+            <strong>{{ profile()?.createdAt | date: 'medium' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('profile.lastLoginAt') }}</span>
+            <strong>{{ profile()?.lastLoginAt ? (profile()?.lastLoginAt | date: 'medium') : '-' }}</strong>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="form-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('profile.profileTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('user', 'updateProfile') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('profile.firstName') }}</mat-label>
+            <input matInput formControlName="firstName" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('profile.lastName') }}</mat-label>
+            <input matInput formControlName="lastName" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('profile.email') }}</mat-label>
+            <input matInput type="email" formControlName="email" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('profile.phone') }}</mat-label>
+            <input matInput formControlName="phoneNumber" />
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="refresh()">{{ i18n.t('profile.reset') }}</button>
+            <button mat-flat-button type="submit" [disabled]="savingProfile() || profileForm.invalid">
+              {{ savingProfile() ? i18n.t('profile.saving') : i18n.t('profile.save') }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="content-grid">
+    <mat-card appearance="outlined" class="form-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('profile.passwordTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('user', 'updatePassword') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('profile.currentPassword') }}</mat-label>
+            <input matInput type="password" formControlName="currentPassword" autocomplete="current-password" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('profile.newPassword') }}</mat-label>
+            <input matInput type="password" formControlName="newPassword" autocomplete="new-password" />
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button mat-flat-button type="submit" [disabled]="savingPassword() || passwordForm.invalid">
+              {{ savingPassword() ? i18n.t('profile.saving') : i18n.t('profile.updatePassword') }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="danger-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('profile.deleteTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('user', 'deleteProfile') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p>{{ i18n.t('profile.deleteText') }}</p>
+        <button mat-stroked-button type="button" (click)="deleteProfile()" [disabled]="deleting()">
+          {{ deleting() ? i18n.t('profile.deleting') : i18n.t('profile.delete') }}
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  @if (message()) {
+    <mat-card appearance="outlined" class="success-card">
+      <mat-card-content>{{ message() }}</mat-card-content>
+    </mat-card>
+  }
+
+  @if (endpointErrors().length) {
+    <mat-card appearance="outlined" class="error-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('profile.endpointErrors') }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set aria-label="Profile endpoint errors">
+          @for (error of endpointErrors(); track error) {
+            <mat-chip>{{ error }}</mat-chip>
+          }
+        </mat-chip-set>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

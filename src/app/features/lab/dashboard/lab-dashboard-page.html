@@ -1,0 +1,124 @@
+<section class="dashboard">
+  <header class="dashboard__header">
+    <div>
+      <span>{{ i18n.t('common.lab') }}</span>
+      <h2>{{ i18n.t('pages.labDashboard.title') }}</h2>
+      <p>{{ i18n.t('pages.labDashboard.description') }}</p>
+    </div>
+
+    <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
+      {{ i18n.t('lab.dashboard.refresh') }}
+    </button>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-row">
+      <mat-progress-spinner mode="indeterminate" diameter="28" />
+      <span>{{ i18n.t('lab.dashboard.loading') }}</span>
+    </div>
+  }
+
+  <div class="metric-grid">
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('lab.dashboard.temperature') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('statistics', 'containerReadings') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <strong>{{ metricValue(data().stats?.tempAvg, 'C') }}</strong>
+        <span>min {{ metricValue(data().stats?.tempMin, 'C') }} / max {{ metricValue(data().stats?.tempMax, 'C') }}</span>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('lab.dashboard.humidity') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('statistics', 'containerReadings') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <strong>{{ metricValue(data().stats?.humAvg, '%') }}</strong>
+        <span>min {{ metricValue(data().stats?.humMin, '%') }} / max {{ metricValue(data().stats?.humMax, '%') }}</span>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('lab.dashboard.samples') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('sample', 'list') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <strong>{{ data().samples.length }}</strong>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('lab.dashboard.tests') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('test', 'list') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <strong>{{ data().tests.length }}</strong>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('lab.dashboard.results') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('testResult', 'list') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <strong>{{ data().results.length }}</strong>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('lab.dashboard.points') }}</mat-card-title>
+        <mat-card-subtitle>{{ i18n.t('lab.dashboard.window') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <strong>{{ readingPoints().length }}</strong>
+        <span>
+          {{ data().stats?.from | date: 'medium' }} - {{ data().stats?.to | date: 'medium' }}
+        </span>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card appearance="outlined" class="readings-card">
+    <mat-card-header>
+      <mat-card-title>{{ i18n.t('lab.dashboard.recentReadings') }}</mat-card-title>
+      <mat-card-subtitle>{{ api.endpointLabel('statistics', 'containerReadings') }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (recentReadings().length) {
+        <div class="readings-list">
+          @for (point of recentReadings(); track $index) {
+            <div class="reading-row">
+              <span>{{ point.time | date: 'medium' }}</span>
+              <strong>{{ point.temperature | number: '1.1-1' }} C</strong>
+              <strong>{{ point.humidity | number: '1.1-1' }}%</strong>
+            </div>
+          }
+        </div>
+      } @else {
+        <p>{{ i18n.t('lab.dashboard.noReadings') }}</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  @if (errors().length) {
+    <mat-card appearance="outlined" class="error-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('lab.dashboard.endpointErrors') }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set aria-label="Endpoint errors">
+          @for (error of errors(); track error) {
+            <mat-chip>{{ error }}</mat-chip>
+          }
+        </mat-chip-set>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

@@ -1,0 +1,119 @@
+<section class="container-page">
+  <header class="page-heading">
+    <div>
+      <span>{{ i18n.t('common.lab') }}</span>
+      <h2>{{ i18n.t('pages.container.title') }}</h2>
+      <p>{{ i18n.t('pages.container.description') }}</p>
+    </div>
+
+    <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
+      {{ i18n.t('container.refresh') }}
+    </button>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-row">
+      <mat-progress-spinner mode="indeterminate" diameter="28" />
+      <span>{{ i18n.t('container.loading') }}</span>
+    </div>
+  }
+
+  <div class="content-grid">
+    <mat-card appearance="outlined" class="summary-card">
+      <mat-card-header>
+        <mat-card-title>{{ container()?.label || i18n.t('container.current') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('container', 'current') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="metric-grid">
+          <div>
+            <span>{{ i18n.t('container.temperatureMin') }}</span>
+            <strong>{{ value(container()?.temperatureMin, 'C') }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('container.temperatureMax') }}</span>
+            <strong>{{ value(container()?.temperatureMax, 'C') }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('container.humidityMin') }}</span>
+            <strong>{{ value(container()?.humidityMin, '%') }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('container.humidityMax') }}</span>
+            <strong>{{ value(container()?.humidityMax, '%') }}</strong>
+          </div>
+        </div>
+
+        <div class="context-panel">
+          <strong>{{ i18n.t('container.identifier') }}</strong>
+          <span>{{ container()?.id || '-' }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="form-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('container.settingsTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('container', 'update') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="save()">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('container.temperatureMin') }}</mat-label>
+            <input matInput type="number" formControlName="temperatureMin" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('container.temperatureMax') }}</mat-label>
+            <input matInput type="number" formControlName="temperatureMax" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('container.humidityMin') }}</mat-label>
+            <input matInput type="number" formControlName="humidityMin" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('container.humidityMax') }}</mat-label>
+            <input matInput type="number" formControlName="humidityMax" />
+          </mat-form-field>
+
+          <div class="context-panel">
+            <strong>{{ i18n.t('container.updateScope') }}</strong>
+            <span>{{ i18n.t('container.updateScopeText') }}</span>
+          </div>
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="refresh()">{{ i18n.t('container.reset') }}</button>
+            <button mat-flat-button type="submit" [disabled]="saving() || form.invalid">
+              {{ saving() ? i18n.t('container.saving') : i18n.t('container.save') }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  @if (message()) {
+    <mat-card appearance="outlined" class="success-card">
+      <mat-card-content>{{ message() }}</mat-card-content>
+    </mat-card>
+  }
+
+  @if (endpointErrors().length) {
+    <mat-card appearance="outlined" class="error-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('container.endpointErrors') }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set aria-label="Container endpoint errors">
+          @for (error of endpointErrors(); track error) {
+            <mat-chip>{{ error }}</mat-chip>
+          }
+        </mat-chip-set>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

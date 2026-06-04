@@ -1,0 +1,190 @@
+<section class="samples-page">
+  <header class="page-heading">
+    <div>
+      <span>{{ i18n.t('common.lab') }}</span>
+      <h2>{{ i18n.t('pages.samples.title') }}</h2>
+      <p>{{ i18n.t('pages.samples.description') }}</p>
+    </div>
+
+    <div class="page-actions">
+      <button mat-stroked-button type="button" (click)="startCreate()">{{ i18n.t('samples.new') }}</button>
+      <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
+        {{ i18n.t('samples.refresh') }}
+      </button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-row">
+      <mat-progress-spinner mode="indeterminate" diameter="28" />
+      <span>{{ i18n.t('samples.loading') }}</span>
+    </div>
+  }
+
+  <div class="content-grid">
+    <mat-card appearance="outlined" class="table-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('samples.listTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('sample', 'list') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (samples().length) {
+          <table mat-table [dataSource]="samples()">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('samples.name') }}</th>
+              <td mat-cell *matCellDef="let sample">{{ sample.name || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="collectedAt">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('samples.collectedAt') }}</th>
+              <td mat-cell *matCellDef="let sample">{{ sample.collectedAt | date: 'medium' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="sourceName">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('samples.source') }}</th>
+              <td mat-cell *matCellDef="let sample">{{ sample.sourceName || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="containerOwnerFullName">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('samples.owner') }}</th>
+              <td mat-cell *matCellDef="let sample">{{ sample.containerOwnerFullName || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('samples.actions') }}</th>
+              <td mat-cell *matCellDef="let sample">
+                <div class="row-actions">
+                  <button
+                    mat-button
+                    type="button"
+                    (click)="loadDetails(sample)"
+                    [disabled]="loadingDetailsId() === sample.id"
+                  >
+                    {{ i18n.t('samples.details') }}
+                  </button>
+                  <button mat-button type="button" (click)="editSample(sample)">{{ i18n.t('samples.edit') }}</button>
+                  <button
+                    mat-button
+                    type="button"
+                    color="warn"
+                    (click)="deleteSample(sample)"
+                    [disabled]="deletingId() === sample.id"
+                  >
+                    {{ i18n.t('samples.delete') }}
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        } @else {
+          <p class="empty-state">{{ i18n.t('samples.empty') }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ selectedSample() ? i18n.t('samples.editTitle') : i18n.t('samples.createTitle') }}
+        </mat-card-title>
+        <mat-card-subtitle>
+          {{ selectedSample() ? api.endpointLabel('sample', 'update') : api.endpointLabel('sample', 'create') }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="save()">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('samples.name') }}</mat-label>
+            <input matInput formControlName="name" autocomplete="off" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('samples.collectedAt') }}</mat-label>
+            <input matInput type="datetime-local" formControlName="collectedAt" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('samples.source') }}</mat-label>
+            <mat-select formControlName="sourceId">
+              <mat-option value="">{{ i18n.t('samples.noSource') }}</mat-option>
+              @for (source of sources(); track source.id) {
+                <mat-option [value]="source.id">{{ source.name || source.id }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <div class="context-panel">
+            <strong>{{ i18n.t('samples.container') }}</strong>
+            <span>{{ container()?.label || container()?.id || i18n.t('samples.noContainer') }}</span>
+          </div>
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="startCreate()">{{ i18n.t('samples.cancel') }}</button>
+            <button mat-flat-button type="submit" [disabled]="saving() || form.invalid">
+              {{ saving() ? i18n.t('samples.saving') : i18n.t('samples.save') }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  @if (detailedSample()) {
+    <mat-card appearance="outlined" class="details-card">
+      <mat-card-header>
+        <mat-card-title>{{ detailedSample()?.name || i18n.t('samples.detailsTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('sample', 'byId') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="detail-grid">
+          <div>
+            <span>{{ i18n.t('samples.identifier') }}</span>
+            <strong>{{ detailedSample()?.id || '-' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('samples.collectedAt') }}</span>
+            <strong>{{ detailedSample()?.collectedAt | date: 'medium' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('samples.source') }}</span>
+            <strong>{{ detailedSample()?.sourceName || detailedSample()?.sourceId || '-' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('samples.owner') }}</span>
+            <strong>{{ detailedSample()?.containerOwnerFullName || '-' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('samples.container') }}</span>
+            <strong>{{ detailedSample()?.containerId || '-' }}</strong>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (message()) {
+    <mat-card appearance="outlined" class="success-card">
+      <mat-card-content>{{ message() }}</mat-card-content>
+    </mat-card>
+  }
+
+  @if (endpointErrors().length) {
+    <mat-card appearance="outlined" class="error-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('samples.endpointErrors') }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set aria-label="Sample endpoint errors">
+          @for (error of endpointErrors(); track error) {
+            <mat-chip>{{ error }}</mat-chip>
+          }
+        </mat-chip-set>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

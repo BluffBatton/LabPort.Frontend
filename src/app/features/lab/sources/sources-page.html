@@ -1,0 +1,195 @@
+<section class="sources-page">
+  <header class="page-heading">
+    <div>
+      <span>{{ i18n.t('common.lab') }}</span>
+      <h2>{{ i18n.t('pages.sources.title') }}</h2>
+      <p>{{ i18n.t('pages.sources.description') }}</p>
+    </div>
+
+    <div class="page-actions">
+      <button mat-stroked-button type="button" (click)="startCreate()">{{ i18n.t('sources.new') }}</button>
+      <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
+        {{ i18n.t('sources.refresh') }}
+      </button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-row">
+      <mat-progress-spinner mode="indeterminate" diameter="28" />
+      <span>{{ i18n.t('sources.loading') }}</span>
+    </div>
+  }
+
+  <div class="content-grid">
+    <mat-card appearance="outlined" class="table-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('sources.listTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('source', 'list') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (sources().length) {
+          <table mat-table [dataSource]="sources()">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('sources.name') }}</th>
+              <td mat-cell *matCellDef="let source">{{ source.name || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="sourceTypeName">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('sources.type') }}</th>
+              <td mat-cell *matCellDef="let source">{{ source.sourceTypeName || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="location">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('sources.location') }}</th>
+              <td mat-cell *matCellDef="let source">{{ source.location || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="contactInfo">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('sources.contactInfo') }}</th>
+              <td mat-cell *matCellDef="let source">{{ source.contactInfo || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('sources.actions') }}</th>
+              <td mat-cell *matCellDef="let source">
+                <div class="row-actions">
+                  <button
+                    mat-button
+                    type="button"
+                    (click)="loadDetails(source)"
+                    [disabled]="loadingDetailsId() === source.id"
+                  >
+                    {{ i18n.t('sources.details') }}
+                  </button>
+                  <button mat-button type="button" (click)="editSource(source)">{{ i18n.t('sources.edit') }}</button>
+                  <button
+                    mat-button
+                    type="button"
+                    color="warn"
+                    (click)="deleteSource(source)"
+                    [disabled]="deletingId() === source.id"
+                  >
+                    {{ i18n.t('sources.delete') }}
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        } @else {
+          <p class="empty-state">{{ i18n.t('sources.empty') }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ selectedSource() ? i18n.t('sources.editTitle') : i18n.t('sources.createTitle') }}
+        </mat-card-title>
+        <mat-card-subtitle>
+          {{ selectedSource() ? api.endpointLabel('source', 'update') : api.endpointLabel('source', 'create') }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="save()">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('sources.name') }}</mat-label>
+            <input matInput formControlName="name" autocomplete="off" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('sources.type') }}</mat-label>
+            <mat-select formControlName="sourceTypeId">
+              <mat-option value="">{{ i18n.t('sources.noType') }}</mat-option>
+              @for (sourceType of sourceTypes(); track sourceType.id) {
+                <mat-option [value]="sourceType.id">{{ sourceType.name || sourceType.id }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('sources.location') }}</mat-label>
+            <input matInput formControlName="location" autocomplete="off" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('sources.contactInfo') }}</mat-label>
+            <input matInput formControlName="contactInfo" autocomplete="off" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('sources.note') }}</mat-label>
+            <textarea matInput formControlName="note" rows="3"></textarea>
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="startCreate()">{{ i18n.t('sources.cancel') }}</button>
+            <button mat-flat-button type="submit" [disabled]="saving() || form.invalid">
+              {{ saving() ? i18n.t('sources.saving') : i18n.t('sources.save') }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  @if (detailedSource()) {
+    <mat-card appearance="outlined" class="details-card">
+      <mat-card-header>
+        <mat-card-title>{{ detailedSource()?.name || i18n.t('sources.detailsTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('source', 'byId') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="detail-grid">
+          <div>
+            <span>{{ i18n.t('sources.identifier') }}</span>
+            <strong>{{ detailedSource()?.id || '-' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('sources.type') }}</span>
+            <strong>{{ detailedSource()?.sourceTypeName || detailedSource()?.sourceTypeId || '-' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('sources.location') }}</span>
+            <strong>{{ detailedSource()?.location || '-' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('sources.contactInfo') }}</span>
+            <strong>{{ detailedSource()?.contactInfo || '-' }}</strong>
+          </div>
+        </div>
+        <div class="context-panel">
+          <strong>{{ i18n.t('sources.note') }}</strong>
+          <span>{{ detailedSource()?.note || '-' }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (message()) {
+    <mat-card appearance="outlined" class="success-card">
+      <mat-card-content>{{ message() }}</mat-card-content>
+    </mat-card>
+  }
+
+  @if (endpointErrors().length) {
+    <mat-card appearance="outlined" class="error-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('sources.endpointErrors') }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set aria-label="Source endpoint errors">
+          @for (error of endpointErrors(); track error) {
+            <mat-chip>{{ error }}</mat-chip>
+          }
+        </mat-chip-set>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

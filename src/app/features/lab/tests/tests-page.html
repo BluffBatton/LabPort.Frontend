@@ -1,0 +1,221 @@
+<section class="tests-page">
+  <header class="page-heading">
+    <div>
+      <span>{{ i18n.t('common.lab') }}</span>
+      <h2>{{ i18n.t('pages.tests.title') }}</h2>
+      <p>{{ i18n.t('pages.tests.description') }}</p>
+    </div>
+
+    <div class="page-actions">
+      <button mat-stroked-button type="button" (click)="startCreate()">{{ i18n.t('tests.new') }}</button>
+      <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
+        {{ i18n.t('tests.refresh') }}
+      </button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-row">
+      <mat-progress-spinner mode="indeterminate" diameter="28" />
+      <span>{{ i18n.t('tests.loading') }}</span>
+    </div>
+  }
+
+  <div class="content-grid">
+    <mat-card appearance="outlined" class="table-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('tests.listTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('test', 'list') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (tests().length) {
+          <table mat-table [dataSource]="tests()">
+            <ng-container matColumnDef="subject">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('tests.subject') }}</th>
+              <td mat-cell *matCellDef="let test">{{ test.subject || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="sampleName">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('tests.sample') }}</th>
+              <td mat-cell *matCellDef="let test">{{ test.sampleName || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="testTypeName">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('tests.testType') }}</th>
+              <td mat-cell *matCellDef="let test">{{ test.testTypeName || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="testStatus">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('tests.status') }}</th>
+              <td mat-cell *matCellDef="let test">
+                <mat-chip>{{ statusLabel(test.testStatus) }}</mat-chip>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="testedAt">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('tests.testedAt') }}</th>
+              <td mat-cell *matCellDef="let test">{{ test.testedAt | date: 'medium' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('tests.actions') }}</th>
+              <td mat-cell *matCellDef="let test">
+                <div class="row-actions">
+                  <button
+                    mat-button
+                    type="button"
+                    (click)="loadDetails(test)"
+                    [disabled]="loadingDetailsId() === test.id"
+                  >
+                    {{ i18n.t('tests.details') }}
+                  </button>
+                  <button mat-button type="button" (click)="editTest(test)">{{ i18n.t('tests.edit') }}</button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        } @else {
+          <p class="empty-state">{{ i18n.t('tests.empty') }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ selectedTest() ? i18n.t('tests.editTitle') : i18n.t('tests.createTitle') }}
+        </mat-card-title>
+        <mat-card-subtitle>
+          {{ selectedTest() ? api.endpointLabel('test', 'update') : api.endpointLabel('test', 'create') }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="save()">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('tests.subject') }}</mat-label>
+            <input matInput formControlName="subject" autocomplete="off" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('tests.sample') }}</mat-label>
+            <mat-select formControlName="sampleId">
+              @for (sample of samples(); track sample.id) {
+                <mat-option [value]="sample.id">{{ sample.name || sample.id }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('tests.testType') }}</mat-label>
+            <mat-select formControlName="testTypeId">
+              @for (testType of testTypes(); track testType.id) {
+                <mat-option [value]="testType.id">
+                  {{ testType.name || testType.id }}
+                  @if (testType.unit) {
+                    <span>({{ testType.unit }})</span>
+                  }
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('tests.testedAt') }}</mat-label>
+            <input matInput type="datetime-local" formControlName="testedAt" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('tests.status') }}</mat-label>
+            <mat-select formControlName="testStatus">
+              @for (status of statuses; track status) {
+                <mat-option [value]="status">{{ statusLabel(status) }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('tests.comment') }}</mat-label>
+            <textarea matInput formControlName="comment" rows="3"></textarea>
+          </mat-form-field>
+
+          @if (selectedTest()) {
+            <div class="context-panel">
+              <strong>{{ i18n.t('tests.updateScope') }}</strong>
+              <span>{{ i18n.t('tests.updateScopeText') }}</span>
+            </div>
+          }
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="startCreate()">{{ i18n.t('tests.cancel') }}</button>
+            <button mat-flat-button type="submit" [disabled]="saving() || form.invalid">
+              {{ saving() ? i18n.t('tests.saving') : i18n.t('tests.save') }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  @if (detailedTest()) {
+    <mat-card appearance="outlined" class="details-card">
+      <mat-card-header>
+        <mat-card-title>{{ detailedTest()?.subject || i18n.t('tests.detailsTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('test', 'byId') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="detail-grid">
+          <div>
+            <span>{{ i18n.t('tests.identifier') }}</span>
+            <strong>{{ detailedTest()?.id || '-' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('tests.sample') }}</span>
+            <strong>{{ detailedTest()?.sampleName || detailedTest()?.sampleId || '-' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('tests.testType') }}</span>
+            <strong>{{ detailedTest()?.testTypeName || detailedTest()?.testTypeId || '-' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('tests.status') }}</span>
+            <strong>{{ statusLabel(detailedTest()?.testStatus) }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('tests.testedAt') }}</span>
+            <strong>{{ detailedTest()?.testedAt | date: 'medium' }}</strong>
+          </div>
+        </div>
+        <div class="context-panel">
+          <strong>{{ i18n.t('tests.comment') }}</strong>
+          <span>{{ detailedTest()?.comment || '-' }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (message()) {
+    <mat-card appearance="outlined" class="success-card">
+      <mat-card-content>{{ message() }}</mat-card-content>
+    </mat-card>
+  }
+
+  @if (endpointErrors().length) {
+    <mat-card appearance="outlined" class="error-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('tests.endpointErrors') }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set aria-label="Test endpoint errors">
+          @for (error of endpointErrors(); track error) {
+            <mat-chip>{{ error }}</mat-chip>
+          }
+        </mat-chip-set>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

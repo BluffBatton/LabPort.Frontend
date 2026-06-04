@@ -1,0 +1,54 @@
+<mat-sidenav-container class="shell shell--admin">
+  <mat-sidenav class="shell__nav" mode="side" opened>
+    <a class="brand" routerLink="/admin/dashboard">
+      <span class="brand__mark">LP</span>
+      <span>
+        <strong>{{ i18n.t('common.appName') }}</strong>
+        <small>{{ i18n.t('layout.admin.title') }}</small>
+      </span>
+    </a>
+
+    <mat-nav-list>
+      @for (item of navItems; track item.path) {
+        <a mat-list-item [routerLink]="item.path" routerLinkActive="active-link">
+          <span matListItemTitle>{{ i18n.t(item.labelKey) }}</span>
+          <span matListItemLine>{{ i18n.t(item.captionKey) }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="shell__content">
+    <mat-toolbar class="topbar">
+      <div>
+        <span class="topbar__eyebrow">{{ i18n.t('common.admin') }}</span>
+        <h1>{{ i18n.t('layout.admin.title') }}</h1>
+      </div>
+
+      <span class="topbar__spacer"></span>
+
+      <a mat-stroked-button routerLink="/lab/dashboard">{{ i18n.t('common.openLab') }}</a>
+
+      <mat-form-field class="locale-field" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ i18n.t('common.language') }}</mat-label>
+        <mat-select [value]="i18n.locale()" (selectionChange)="setLocale($event.value)">
+          @for (locale of i18n.locales; track locale.code) {
+            <mat-option [value]="locale.code">{{ locale.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <span class="session-label">
+        {{ sessionLabel() }}
+        @if (profile()?.role) {
+          <small>{{ profile()?.role }}</small>
+        }
+      </span>
+      <button mat-flat-button type="button" (click)="logout()">{{ i18n.t('common.logout') }}</button>
+    </mat-toolbar>
+
+    <main class="shell__main">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

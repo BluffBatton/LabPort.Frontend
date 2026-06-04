@@ -1,0 +1,98 @@
+.register-page {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: 32px;
+  background:
+    linear-gradient(120deg, rgba(15, 118, 110, 0.08), rgba(49, 75, 124, 0.08)),
+    var(--lp-bg);
+}
+
+.register-panel {
+  display: grid;
+  grid-template-columns: minmax(260px, 380px) minmax(420px, 640px);
+  gap: 40px;
+  width: min(100%, 1060px);
+  align-items: center;
+}
+
+.register-copy {
+  display: grid;
+  gap: 12px;
+}
+
+.register-copy span {
+  color: var(--lp-accent-strong);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.register-copy h1 {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 650;
+}
+
+.register-copy p,
+.endpoint-block p,
+.endpoint-block small {
+  margin: 0;
+  color: var(--lp-text-muted);
+  line-height: 1.6;
+}
+
+mat-card {
+  border-color: var(--lp-border);
+}
+
+mat-card-content,
+form,
+.endpoint-block {
+  display: grid;
+  gap: 16px;
+}
+
+form {
+  padding-top: 18px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.endpoint-block {
+  padding: 14px;
+  border: 1px solid #b9d7d2;
+  border-radius: 8px;
+  background: #effaf7;
+}
+
+.endpoint-block strong {
+  color: var(--lp-accent-strong);
+}
+
+.locale-field {
+  width: 160px;
+}
+
+@media (max-width: 900px) {
+  .register-page {
+    place-items: start stretch;
+    padding: 20px;
+  }
+
+  .register-panel,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

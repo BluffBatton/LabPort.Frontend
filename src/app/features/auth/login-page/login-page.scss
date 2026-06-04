@@ -1,0 +1,100 @@
+.login-page {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: 32px;
+  background:
+    linear-gradient(120deg, rgba(15, 118, 110, 0.08), rgba(49, 75, 124, 0.08)),
+    var(--lp-bg);
+}
+
+.login-panel {
+  display: grid;
+  grid-template-columns: minmax(260px, 420px) minmax(320px, 420px);
+  gap: 40px;
+  width: min(100%, 940px);
+  align-items: center;
+}
+
+.login-copy {
+  display: grid;
+  gap: 12px;
+}
+
+.login-copy span {
+  color: var(--lp-accent-strong);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.login-copy h1 {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 650;
+}
+
+.login-copy p,
+.todo-block p,
+.endpoint-block p,
+.endpoint-block small,
+.todo-block small {
+  margin: 0;
+  color: var(--lp-text-muted);
+  line-height: 1.6;
+}
+
+mat-card {
+  border-color: var(--lp-border);
+}
+
+mat-card-content,
+form,
+.endpoint-block,
+.todo-block {
+  display: grid;
+  gap: 16px;
+}
+
+form {
+  padding-top: 18px;
+}
+
+.todo-block {
+  padding: 14px;
+  border: 1px solid #ead8ad;
+  border-radius: 8px;
+  background: #fff8e6;
+}
+
+.todo-block strong {
+  color: var(--lp-warning);
+}
+
+.endpoint-block {
+  padding: 14px;
+  border: 1px solid #b9d7d2;
+  border-radius: 8px;
+  background: #effaf7;
+}
+
+.endpoint-block strong {
+  color: var(--lp-accent-strong);
+}
+
+.locale-field {
+  width: 160px;
+}
+
+@media (max-width: 820px) {
+  .login-page {
+    place-items: start stretch;
+    padding: 20px;
+  }
+
+  .login-panel {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

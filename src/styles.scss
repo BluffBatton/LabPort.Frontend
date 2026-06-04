@@ -1,1 +1,40 @@
-/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
+:root {
+  --lp-bg: #f6f7f4;
+  --lp-surface: #ffffff;
+  --lp-surface-muted: #eef3ef;
+  --lp-text: #1d2429;
+  --lp-text-muted: #5e6972;
+  --lp-border: #d7ddd8;
+  --lp-accent: #0f766e;
+  --lp-accent-strong: #115e59;
+  --lp-warning: #8a5a00;
+  --lp-admin: #314b7c;
+  color-scheme: light;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--lp-bg);
+  color: var(--lp-text);
+  font-family: Roboto, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.mat-mdc-card {
+  border-radius: 8px;
+}

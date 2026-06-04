@@ -1,0 +1,133 @@
+<section class="alerts-page">
+  <header class="page-heading">
+    <div>
+      <span>{{ i18n.t('common.lab') }}</span>
+      <h2>{{ i18n.t('pages.alerts.title') }}</h2>
+      <p>{{ i18n.t('pages.alerts.description') }}</p>
+    </div>
+
+    <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
+      {{ i18n.t('alerts.refresh') }}
+    </button>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-row">
+      <mat-progress-spinner mode="indeterminate" diameter="28" />
+      <span>{{ i18n.t('alerts.loading') }}</span>
+    </div>
+  }
+
+  <div class="content-grid">
+    <mat-card appearance="outlined" class="table-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('alerts.listTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('alert', 'list') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (alerts().length) {
+          <table mat-table [dataSource]="alerts()">
+            <ng-container matColumnDef="createdAt">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('alerts.createdAt') }}</th>
+              <td mat-cell *matCellDef="let alert">{{ alert.createdAt | date: 'medium' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="message">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('alerts.message') }}</th>
+              <td mat-cell *matCellDef="let alert">{{ alert.message || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('alerts.status') }}</th>
+              <td mat-cell *matCellDef="let alert">{{ statusLabel(alert) }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="sensorReadingId">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('alerts.sensorReading') }}</th>
+              <td mat-cell *matCellDef="let alert">{{ alert.sensorReadingId || '-' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('alerts.actions') }}</th>
+              <td mat-cell *matCellDef="let alert">
+                <div class="row-actions">
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    (click)="loadDetails(alert)"
+                    [disabled]="loadingDetailsId() === alert.id"
+                  >
+                    {{ i18n.t('alerts.details') }}
+                  </button>
+                  <button mat-stroked-button type="button" disabled>{{ i18n.t('alerts.markRead') }}</button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        } @else {
+          <p class="empty-state">{{ i18n.t('alerts.empty') }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="details-card">
+      <mat-card-header>
+        <mat-card-title>{{ selectedAlert()?.message || i18n.t('alerts.detailsTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('alert', 'byId') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        @if (selectedAlert()) {
+          <div class="detail-grid">
+            <div>
+              <span>{{ i18n.t('alerts.identifier') }}</span>
+              <strong>{{ selectedAlert()?.id || '-' }}</strong>
+            </div>
+            <div>
+              <span>{{ i18n.t('alerts.status') }}</span>
+              <strong>{{ statusLabel(selectedAlert()!) }}</strong>
+            </div>
+            <div>
+              <span>{{ i18n.t('alerts.readAt') }}</span>
+              <strong>{{ selectedAlert()?.readAt ? (selectedAlert()?.readAt | date: 'medium') : '-' }}</strong>
+            </div>
+            <div>
+              <span>{{ i18n.t('alerts.sensorReading') }}</span>
+              <strong>{{ selectedAlert()?.sensorReadingId || '-' }}</strong>
+            </div>
+          </div>
+
+          <div class="context-panel">
+            <strong>{{ i18n.t('alerts.detailsLabel') }}</strong>
+            <span>{{ selectedAlert()?.details || '-' }}</span>
+          </div>
+        } @else {
+          <p class="empty-state">{{ i18n.t('alerts.noSelection') }}</p>
+        }
+
+        <div class="context-panel">
+          <strong>{{ i18n.t('common.todo') }}</strong>
+          <span>{{ i18n.t('alerts.mutationTodo') }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  @if (endpointErrors().length) {
+    <mat-card appearance="outlined" class="error-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('alerts.endpointErrors') }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set aria-label="Alert endpoint errors">
+          @for (error of endpointErrors(); track error) {
+            <mat-chip>{{ error }}</mat-chip>
+          }
+        </mat-chip-set>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

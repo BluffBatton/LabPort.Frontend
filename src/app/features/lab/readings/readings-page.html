@@ -1,0 +1,181 @@
+<section class="readings-page">
+  <header class="page-heading">
+    <div>
+      <span>{{ i18n.t('common.lab') }}</span>
+      <h2>{{ i18n.t('pages.readings.title') }}</h2>
+      <p>{{ i18n.t('pages.readings.description') }}</p>
+    </div>
+
+    <div class="page-actions">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ i18n.t('readings.take') }}</mat-label>
+        <mat-select [value]="take()" (selectionChange)="setTake($event.value)">
+          @for (option of takeOptions; track option) {
+            <mat-option [value]="option">{{ option }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
+        {{ i18n.t('readings.refresh') }}
+      </button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-row">
+      <mat-progress-spinner mode="indeterminate" diameter="28" />
+      <span>{{ i18n.t('readings.loading') }}</span>
+    </div>
+  }
+
+  <div class="content-grid">
+    <mat-card appearance="outlined" class="table-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('readings.listTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('sensorReading', 'list') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (readings().length) {
+          <table mat-table [dataSource]="readings()">
+            <ng-container matColumnDef="createdAt">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('readings.createdAt') }}</th>
+              <td mat-cell *matCellDef="let reading">{{ reading.createdAt | date: 'medium' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="temperature">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('readings.temperature') }}</th>
+              <td mat-cell *matCellDef="let reading">{{ reading.temperature | number: '1.1-1' }} C</td>
+            </ng-container>
+
+            <ng-container matColumnDef="humidity">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('readings.humidity') }}</th>
+              <td mat-cell *matCellDef="let reading">{{ reading.humidity | number: '1.1-1' }}%</td>
+            </ng-container>
+
+            <ng-container matColumnDef="lidPosition">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('readings.lidPosition') }}</th>
+              <td mat-cell *matCellDef="let reading">{{ lidLabel(reading.lidPosition) }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>{{ i18n.t('readings.actions') }}</th>
+              <td mat-cell *matCellDef="let reading">
+                <button
+                  mat-stroked-button
+                  type="button"
+                  (click)="loadDetails(reading)"
+                  [disabled]="loadingDetailsId() === reading.id"
+                >
+                  {{ i18n.t('readings.details') }}
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        } @else {
+          <p class="empty-state">{{ i18n.t('readings.empty') }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="form-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('readings.createTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('sensorReading', 'create') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="createReading()">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('readings.deviceKey') }}</mat-label>
+            <input matInput formControlName="deviceKey" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('readings.temperature') }}</mat-label>
+            <input matInput type="number" formControlName="temperature" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('readings.humidity') }}</mat-label>
+            <input matInput type="number" formControlName="humidity" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('readings.lidPosition') }}</mat-label>
+            <mat-select formControlName="lidPosition">
+              @for (position of lidPositions; track position) {
+                <mat-option [value]="position">{{ lidLabel(position) }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <div class="context-panel">
+            <strong>{{ i18n.t('common.todo') }}</strong>
+            <span>{{ i18n.t('readings.mutationTodo') }}</span>
+          </div>
+
+          <div class="form-actions">
+            <button mat-flat-button type="submit" [disabled]="saving() || form.invalid">
+              {{ saving() ? i18n.t('readings.saving') : i18n.t('readings.create') }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  @if (selectedReading()) {
+    <mat-card appearance="outlined" class="details-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('readings.detailsTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('sensorReading', 'byId') }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="detail-grid">
+          <div>
+            <span>{{ i18n.t('readings.identifier') }}</span>
+            <strong>{{ selectedReading()?.id || '-' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('readings.createdAt') }}</span>
+            <strong>{{ selectedReading()?.createdAt | date: 'medium' }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('readings.temperature') }}</span>
+            <strong>{{ selectedReading()?.temperature | number: '1.1-1' }} C</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('readings.humidity') }}</span>
+            <strong>{{ selectedReading()?.humidity | number: '1.1-1' }}%</strong>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (message()) {
+    <mat-card appearance="outlined" class="success-card">
+      <mat-card-content>{{ message() }}</mat-card-content>
+    </mat-card>
+  }
+
+  @if (endpointErrors().length) {
+    <mat-card appearance="outlined" class="error-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('readings.endpointErrors') }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set aria-label="Sensor reading endpoint errors">
+          @for (error of endpointErrors(); track error) {
+            <mat-chip>{{ error }}</mat-chip>
+          }
+        </mat-chip-set>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

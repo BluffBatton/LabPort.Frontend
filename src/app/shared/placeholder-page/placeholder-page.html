@@ -1,0 +1,26 @@
+<section class="placeholder-page">
+  <header class="page-heading">
+    <span>{{ text(data().eyebrowKey, 'common.appName') }}</span>
+    <h2>{{ text(data().titleKey, 'placeholder.title') }}</h2>
+    <p>{{ text(data().descriptionKey, 'placeholder.description') }}</p>
+  </header>
+
+  <mat-card appearance="outlined" class="status-card">
+    <mat-card-header>
+      <mat-card-title>{{ i18n.t('placeholder.endpointLabel') }}</mat-card-title>
+      <mat-card-subtitle>{{ endpointSubtitle() }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-chip-set aria-label="Backend endpoint status">
+        <mat-chip>{{ i18n.t('common.todo') }}</mat-chip>
+      </mat-chip-set>
+      <p>{{ endpointStatus() }}</p>
+      <p>{{ implementationStatus() }}</p>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-flat-button type="button" disabled>{{ actionLabel() }}</button>
+    </mat-card-actions>
+  </mat-card>
+</section>
