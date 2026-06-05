@@ -37,7 +37,9 @@
 
 .register-copy p,
 .endpoint-block p,
-.endpoint-block small {
+.endpoint-block small,
+.error-block p,
+.error-block small {
   margin: 0;
   color: var(--lp-text-muted);
   line-height: 1.6;
@@ -49,7 +51,8 @@ mat-card {
 
 mat-card-content,
 form,
-.endpoint-block {
+.endpoint-block,
+.error-block {
   display: grid;
   gap: 16px;
 }
@@ -79,6 +82,30 @@ form {
 
 .endpoint-block strong {
   color: var(--lp-accent-strong);
+}
+
+.error-block {
+  padding: 14px;
+  border: 1px solid #ead8ad;
+  border-radius: 8px;
+  background: #fff8e6;
+}
+
+.error-block strong {
+  color: var(--lp-warning);
+}
+
+pre {
+  max-height: 280px;
+  margin: 0;
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid var(--lp-border);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--lp-text);
+  font-size: 12px;
+  white-space: pre-wrap;
 }
 
 .locale-field {

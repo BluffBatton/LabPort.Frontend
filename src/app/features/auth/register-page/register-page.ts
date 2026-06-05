@@ -1,5 +1,14 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -13,6 +22,11 @@ import { LabportApiService } from '../../../core/api/labport-api.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LocalizationService } from '../../../core/localization/localization.service';
 import { SupportedLocale } from '../../../core/localization/translations';
+
+const finiteNumberValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const value = control.value as unknown;
+  return typeof value === 'number' && Number.isFinite(value) ? null : { finiteNumber: true };
+};
 
 @Component({
   selector: 'app-register-page',
@@ -32,6 +46,7 @@ import { SupportedLocale } from '../../../core/localization/translations';
 export class RegisterPage {
   readonly i18n = inject(LocalizationService);
   readonly message = signal<string | null>(null);
+  readonly errorDetails = signal<string | null>(null);
   readonly registeredUserId = signal<string | null>(null);
   readonly loading = signal(false);
 
@@ -60,16 +75,16 @@ export class RegisterPage {
       validators: [Validators.required]
     }),
     temperatureMin: new FormControl<number | null>(null, {
-      validators: [Validators.required]
+      validators: [Validators.required, finiteNumberValidator]
     }),
     temperatureMax: new FormControl<number | null>(null, {
-      validators: [Validators.required]
+      validators: [Validators.required, finiteNumberValidator]
     }),
     humidityMin: new FormControl<number | null>(null, {
-      validators: [Validators.required]
+      validators: [Validators.required, finiteNumberValidator]
     }),
     humidityMax: new FormControl<number | null>(null, {
-      validators: [Validators.required]
+      validators: [Validators.required, finiteNumberValidator]
     })
   });
 
@@ -96,14 +111,18 @@ export class RegisterPage {
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.message.set(this.i18n.t('auth.register.validationFailed'));
       return;
     }
 
+    const payload = this.payload();
+
     this.loading.set(true);
     this.message.set(null);
+    this.errorDetails.set(null);
     this.registeredUserId.set(null);
 
-    this.auth.register(this.payload()).subscribe({
+    this.auth.register(payload).subscribe({
       next: (userId) => {
         this.loading.set(false);
         this.registeredUserId.set(userId);
@@ -111,7 +130,7 @@ export class RegisterPage {
       },
       error: (error: unknown) => {
         this.loading.set(false);
-        this.message.set(error instanceof Error ? error.message : this.i18n.t('auth.register.failed'));
+        this.handleRegisterError(error, payload);
       }
     });
   }
@@ -134,11 +153,81 @@ export class RegisterPage {
       },
       container: {
         label: value.containerLabel.trim(),
-        temperatureMin: value.temperatureMin,
-        temperatureMax: value.temperatureMax,
-        humidityMin: value.humidityMin,
-        humidityMax: value.humidityMax
+        temperatureMin: this.numberValue(value.temperatureMin),
+        temperatureMax: this.numberValue(value.temperatureMax),
+        humidityMin: this.numberValue(value.humidityMin),
+        humidityMax: this.numberValue(value.humidityMax)
       }
     };
+  }
+
+  private numberValue(value: number | null): number {
+    if (typeof value !== 'number' || !Number.isFinite(value)) {
+      throw new Error('Registration numeric field is missing or invalid.');
+    }
+
+    return value;
+  }
+
+  private handleRegisterError(error: unknown, sentPayload: RegisterDto): void {
+    if (error instanceof HttpErrorResponse) {
+      const backendMessage = this.backendMessage(error.error);
+      const debugDetails = {
+        status: error.status,
+        statusText: error.statusText,
+        url: error.url,
+        errorBody: error.error,
+        sentPayload
+      };
+
+      console.error('Registration failed', debugDetails);
+
+      this.message.set(`Registration failed: ${error.status} ${backendMessage}`);
+      this.errorDetails.set(this.prettyJson(debugDetails));
+      return;
+    }
+
+    const debugDetails = {
+      error,
+      sentPayload
+    };
+
+    console.error('Registration failed', debugDetails);
+
+    this.message.set(error instanceof Error ? `Registration failed: ${error.message}` : this.i18n.t('auth.register.failed'));
+    this.errorDetails.set(this.prettyJson(debugDetails));
+  }
+
+  private backendMessage(errorBody: unknown): string {
+    if (!errorBody) {
+      return this.i18n.t('auth.register.noBackendMessage');
+    }
+
+    if (typeof errorBody === 'string') {
+      return errorBody;
+    }
+
+    if (typeof errorBody === 'object') {
+      const body = errorBody as Record<string, unknown>;
+      const message = body['message'] ?? body['title'] ?? body['detail'] ?? body['error'];
+
+      if (typeof message === 'string') {
+        return message;
+      }
+
+      if (body['errors']) {
+        return this.prettyJson(body['errors']);
+      }
+    }
+
+    return this.prettyJson(errorBody);
+  }
+
+  private prettyJson(value: unknown): string {
+    try {
+      return JSON.stringify(value, null, 2);
+    } catch {
+      return String(value);
+    }
   }
 }

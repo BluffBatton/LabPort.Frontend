@@ -52,21 +52,25 @@
             <mat-form-field appearance="outline">
               <mat-label>{{ i18n.t('container.temperatureMin') }}</mat-label>
               <input matInput type="number" formControlName="temperatureMin" />
+              <mat-error>{{ i18n.t('auth.register.numericRequired') }}</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>{{ i18n.t('container.temperatureMax') }}</mat-label>
               <input matInput type="number" formControlName="temperatureMax" />
+              <mat-error>{{ i18n.t('auth.register.numericRequired') }}</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>{{ i18n.t('container.humidityMin') }}</mat-label>
               <input matInput type="number" formControlName="humidityMin" />
+              <mat-error>{{ i18n.t('auth.register.numericRequired') }}</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>{{ i18n.t('container.humidityMax') }}</mat-label>
               <input matInput type="number" formControlName="humidityMax" />
+              <mat-error>{{ i18n.t('auth.register.numericRequired') }}</mat-error>
             </mat-form-field>
           </div>
 
@@ -79,11 +83,15 @@
         </form>
 
         @if (message()) {
-          <div class="endpoint-block">
+          <div [class.endpoint-block]="!errorDetails()" [class.error-block]="errorDetails()">
             <strong>{{ i18n.t('auth.login.backendReady') }}</strong>
             <p>{{ message() }}</p>
             @if (registeredUserId()) {
               <small>{{ i18n.t('auth.register.createdId') }} {{ registeredUserId() }}</small>
+              <button mat-flat-button type="button" (click)="openLogin()">{{ i18n.t('auth.register.openLogin') }}</button>
+            }
+            @if (errorDetails()) {
+              <pre>{{ errorDetails() }}</pre>
             }
           </div>
         }

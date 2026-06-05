@@ -91,9 +91,12 @@ export class AuthService {
       );
     }
 
-    return this.http.post<string>(this.api.endpointUrl('auth', 'register'), request, {
-      context: new HttpContext().set(SKIP_AUTH, true)
-    });
+    return this.http
+      .post(this.api.endpointUrl('auth', 'register'), request, {
+        context: new HttpContext().set(SKIP_AUTH, true),
+        responseType: 'text'
+      })
+      .pipe(map((response) => this.normalizeRegisterResponse(response)));
   }
 
   useToken(accessToken: string, refreshToken?: string, response?: AuthTokenResponse): AuthSession | null {
@@ -183,5 +186,20 @@ export class AuthService {
     }
 
     return session;
+  }
+
+  private normalizeRegisterResponse(response: string): string {
+    const trimmedResponse = response.trim();
+
+    if (!trimmedResponse) {
+      return '';
+    }
+
+    try {
+      const parsed = JSON.parse(trimmedResponse) as unknown;
+      return typeof parsed === 'string' ? parsed : trimmedResponse;
+    } catch {
+      return trimmedResponse;
+    }
   }
 }
