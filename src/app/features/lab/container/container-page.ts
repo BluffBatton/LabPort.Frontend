@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,9 +7,9 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { finalize } from 'rxjs';
+import { catchError, finalize, forkJoin, of } from 'rxjs';
 
-import { ContainerDto, ContainerUpdateDto } from '../../../core/api/api.models';
+import { ContainerDto, ContainerUpdateDto, LidPosition, SensorReadingDto } from '../../../core/api/api.models';
 import { LabApiService } from '../../../core/api/lab-api.service';
 import { LabportApiService } from '../../../core/api/labport-api.service';
 import { LocalizationService } from '../../../core/localization/localization.service';
@@ -16,6 +17,7 @@ import { LocalizationService } from '../../../core/localization/localization.ser
 @Component({
   selector: 'app-container-page',
   imports: [
+    DatePipe,
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
@@ -31,6 +33,7 @@ export class ContainerPage {
   readonly i18n = inject(LocalizationService);
   readonly api = inject(LabportApiService);
   readonly container = signal<ContainerDto | null>(null);
+  readonly latestReading = signal<SensorReadingDto | null>(null);
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly errors = signal<string[]>([]);
@@ -61,20 +64,33 @@ export class ContainerPage {
     this.loading.set(true);
     this.errors.set([]);
 
-    this.labApi
-      .getContainer()
+    forkJoin({
+      container: this.labApi.getContainer().pipe(
+        catchError((error: unknown) => {
+          this.addError('GET /api/Container/GetContainer', error);
+          return of(null);
+        })
+      ),
+      readings: this.labApi.getSensorReadings(1).pipe(
+        catchError((error: unknown) => {
+          this.addError('GET /api/SensorReading/GetAllSensorReadings/1', error);
+          return of([] as SensorReadingDto[]);
+        })
+      )
+    })
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (container) => {
-          this.container.set(container);
+      .subscribe(({ container, readings }) => {
+        this.container.set(container);
+        this.latestReading.set(readings[0] ?? null);
+
+        if (container) {
           this.form.reset({
             temperatureMin: container.temperatureMin ?? null,
             temperatureMax: container.temperatureMax ?? null,
             humidityMin: container.humidityMin ?? null,
             humidityMax: container.humidityMax ?? null
           });
-        },
-        error: (error: unknown) => this.addError('GET /api/Container/GetContainer', error)
+        }
       });
   }
 
@@ -101,6 +117,14 @@ export class ContainerPage {
 
   value(value: number | null | undefined, unit: string): string {
     return typeof value === 'number' ? `${value.toFixed(1)} ${unit}` : '-';
+  }
+
+  range(min: number | null | undefined, max: number | null | undefined, unit: string): string {
+    return `${this.value(min, unit)} - ${this.value(max, unit)}`;
+  }
+
+  lidLabel(lidPosition: LidPosition | undefined | null): string {
+    return lidPosition ? this.i18n.t(`readings.lid.${lidPosition}`) : '-';
   }
 
   endpointErrors(): readonly string[] {

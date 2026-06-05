@@ -87,7 +87,6 @@
             <strong>{{ i18n.t('auth.login.backendReady') }}</strong>
             <p>{{ message() }}</p>
             @if (registeredUserId()) {
-              <small>{{ i18n.t('auth.register.createdId') }} {{ registeredUserId() }}</small>
               <button mat-flat-button type="button" (click)="openLogin()">{{ i18n.t('auth.register.openLogin') }}</button>
             }
             @if (errorDetails()) {

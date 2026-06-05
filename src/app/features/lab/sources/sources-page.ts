@@ -91,8 +91,8 @@ export class SourcesPage {
     })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe(({ sources, sourceTypes }) => {
-        this.sources.set(sources);
-        this.sourceTypes.set(sourceTypes);
+        this.sources.set([...sources].sort((first, second) => this.i18n.compareText(first.name, second.name)));
+        this.sourceTypes.set([...sourceTypes].sort((first, second) => this.i18n.compareText(first.name, second.name)));
       });
   }
 
@@ -167,7 +167,7 @@ export class SourcesPage {
       return;
     }
 
-    const sourceName = source.name ?? source.id;
+    const sourceName = source.name || this.i18n.t('sources.unnamed');
 
     if (!globalThis.confirm(this.i18n.t('sources.deleteConfirm').replace('{name}', sourceName))) {
       return;

@@ -38,7 +38,7 @@
 
             <ng-container matColumnDef="collectedAt">
               <th mat-header-cell *matHeaderCellDef>{{ i18n.t('samples.collectedAt') }}</th>
-              <td mat-cell *matCellDef="let sample">{{ sample.collectedAt | date: 'medium' }}</td>
+              <td mat-cell *matCellDef="let sample">{{ sample.collectedAt | date: 'medium' : undefined : i18n.dateLocale() }}</td>
             </ng-container>
 
             <ng-container matColumnDef="sourceName">
@@ -113,14 +113,14 @@
             <mat-select formControlName="sourceId">
               <mat-option value="">{{ i18n.t('samples.noSource') }}</mat-option>
               @for (source of sources(); track source.id) {
-                <mat-option [value]="source.id">{{ source.name || source.id }}</mat-option>
+                <mat-option [value]="source.id">{{ source.name || i18n.t('sources.unnamed') }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
 
           <div class="context-panel">
             <strong>{{ i18n.t('samples.container') }}</strong>
-            <span>{{ container()?.label || container()?.id || i18n.t('samples.noContainer') }}</span>
+            <span>{{ container()?.label || i18n.t('samples.noContainer') }}</span>
           </div>
 
           <div class="form-actions">
@@ -143,24 +143,16 @@
       <mat-card-content>
         <div class="detail-grid">
           <div>
-            <span>{{ i18n.t('samples.identifier') }}</span>
-            <strong>{{ detailedSample()?.id || '-' }}</strong>
-          </div>
-          <div>
             <span>{{ i18n.t('samples.collectedAt') }}</span>
-            <strong>{{ detailedSample()?.collectedAt | date: 'medium' }}</strong>
+            <strong>{{ detailedSample()?.collectedAt | date: 'medium' : undefined : i18n.dateLocale() }}</strong>
           </div>
           <div>
             <span>{{ i18n.t('samples.source') }}</span>
-            <strong>{{ detailedSample()?.sourceName || detailedSample()?.sourceId || '-' }}</strong>
+            <strong>{{ detailedSample()?.sourceName || '-' }}</strong>
           </div>
           <div>
             <span>{{ i18n.t('samples.owner') }}</span>
             <strong>{{ detailedSample()?.containerOwnerFullName || '-' }}</strong>
-          </div>
-          <div>
-            <span>{{ i18n.t('samples.container') }}</span>
-            <strong>{{ detailedSample()?.containerId || '-' }}</strong>
           </div>
         </div>
       </mat-card-content>

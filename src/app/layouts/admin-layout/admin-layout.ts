@@ -51,6 +51,7 @@ export class AdminLayout {
     { path: '/admin/users', labelKey: 'nav.admin.users', captionKey: 'nav.admin.users.caption' },
     { path: '/admin/roles', labelKey: 'nav.admin.roles', captionKey: 'nav.admin.roles.caption' },
     { path: '/admin/dictionaries', labelKey: 'nav.admin.dictionaries', captionKey: 'nav.admin.dictionaries.caption' },
+    { path: '/admin/data-management', labelKey: 'nav.admin.dataManagement', captionKey: 'nav.admin.dataManagement.caption' },
     { path: '/admin/audit', labelKey: 'nav.admin.audit', captionKey: 'nav.admin.audit.caption' },
     { path: '/admin/profile', labelKey: 'nav.admin.profile', captionKey: 'nav.admin.profile.caption' }
   ];
@@ -62,11 +63,11 @@ export class AdminLayout {
 
     if (profile) {
       const fullName = [profile.firstName, profile.lastName].filter(Boolean).join(' ');
-      return fullName || profile.email || profile.role || 'JWT session';
+      return fullName || profile.email || 'JWT session';
     }
 
     const session = this.auth.session();
-    return session?.displayName ?? session?.subject ?? 'JWT session';
+    return session?.displayName ?? 'JWT session';
   }
 
   setLocale(locale: SupportedLocale): void {

@@ -79,7 +79,7 @@
       <mat-card-content>
         <strong>{{ readingPoints().length }}</strong>
         <span>
-          {{ data().stats?.from | date: 'medium' }} - {{ data().stats?.to | date: 'medium' }}
+          {{ data().stats?.from | date: 'medium' : undefined : i18n.dateLocale() }} - {{ data().stats?.to | date: 'medium' : undefined : i18n.dateLocale() }}
         </span>
       </mat-card-content>
     </mat-card>
@@ -95,7 +95,7 @@
         <div class="readings-list">
           @for (point of recentReadings(); track $index) {
             <div class="reading-row">
-              <span>{{ point.time | date: 'medium' }}</span>
+              <span>{{ point.time | date: 'medium' : undefined : i18n.dateLocale() }}</span>
               <strong>{{ point.temperature | number: '1.1-1' }} C</strong>
               <strong>{{ point.humidity | number: '1.1-1' }}%</strong>
             </div>

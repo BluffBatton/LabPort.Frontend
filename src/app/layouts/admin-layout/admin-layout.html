@@ -40,9 +40,6 @@
 
       <span class="session-label">
         {{ sessionLabel() }}
-        @if (profile()?.role) {
-          <small>{{ profile()?.role }}</small>
-        }
       </span>
       <button mat-flat-button type="button" (click)="logout()">{{ i18n.t('common.logout') }}</button>
     </mat-toolbar>

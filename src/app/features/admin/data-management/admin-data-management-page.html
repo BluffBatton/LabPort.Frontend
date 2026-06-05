@@ -1,0 +1,92 @@
+<section class="data-management-page">
+  <header class="page-heading">
+    <div>
+      <span>{{ i18n.t('common.admin') }}</span>
+      <h2>{{ i18n.t('pages.dataManagement.title') }}</h2>
+      <p>{{ i18n.t('pages.dataManagement.description') }}</p>
+    </div>
+  </header>
+
+  <div class="content-grid">
+    <mat-card appearance="outlined" class="management-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('dataManagement.usersExportTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ api.endpointLabel('admin', 'usersReport') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p>{{ i18n.t('dataManagement.usersExportText') }}</p>
+
+        <form [formGroup]="exportForm" (ngSubmit)="exportUsers()">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ i18n.t('admin.users.from') }}</mat-label>
+              <input matInput type="datetime-local" formControlName="from" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ i18n.t('admin.users.to') }}</mat-label>
+              <input matInput type="datetime-local" formControlName="to" />
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="resetExportRange()">
+              {{ i18n.t('admin.users.reset') }}
+            </button>
+            <button mat-flat-button type="submit" [disabled]="exporting()">
+              {{ exporting() ? i18n.t('dataManagement.exporting') : i18n.t('dataManagement.exportUsers') }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="management-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('dataManagement.backupTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ i18n.t('placeholder.endpointMissing') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p>{{ i18n.t('dataManagement.backupText') }}</p>
+        <!-- TODO: Enable full database backup when the backend exposes a documented endpoint. -->
+        <button mat-stroked-button type="button" disabled>{{ i18n.t('dataManagement.backupAction') }}</button>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="management-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('dataManagement.importTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ i18n.t('placeholder.endpointMissing') }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p>{{ i18n.t('dataManagement.importText') }}</p>
+        <!-- TODO: Enable database import when the backend exposes a documented endpoint. -->
+        <button mat-stroked-button type="button" disabled>{{ i18n.t('dataManagement.importAction') }}</button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  @if (message()) {
+    <mat-card appearance="outlined" class="success-card">
+      <mat-card-content>{{ message() }}</mat-card-content>
+    </mat-card>
+  }
+
+  @if (endpointErrors().length) {
+    <mat-card appearance="outlined" class="error-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('dataManagement.endpointErrors') }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set aria-label="Data management endpoint errors">
+          @for (error of endpointErrors(); track error) {
+            <mat-chip>{{ error }}</mat-chip>
+          }
+        </mat-chip-set>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

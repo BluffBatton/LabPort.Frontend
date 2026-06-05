@@ -1,0 +1,74 @@
+.data-management-page {
+  display: grid;
+  gap: 20px;
+}
+
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+
+  span {
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 4px 0 8px;
+    color: #0f172a;
+  }
+
+  p {
+    margin: 0;
+    max-width: 720px;
+    color: #64748b;
+  }
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.management-card {
+  border-color: #dbe3ef;
+
+  mat-card-content {
+    display: grid;
+    gap: 16px;
+  }
+
+  p {
+    margin: 0;
+    color: #475569;
+    line-height: 1.5;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.success-card {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.error-card {
+  border-color: #fecaca;
+  background: #fef2f2;
+}

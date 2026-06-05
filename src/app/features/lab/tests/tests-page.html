@@ -55,7 +55,7 @@
 
             <ng-container matColumnDef="testedAt">
               <th mat-header-cell *matHeaderCellDef>{{ i18n.t('tests.testedAt') }}</th>
-              <td mat-cell *matCellDef="let test">{{ test.testedAt | date: 'medium' }}</td>
+              <td mat-cell *matCellDef="let test">{{ test.testedAt | date: 'medium' : undefined : i18n.dateLocale() }}</td>
             </ng-container>
 
             <ng-container matColumnDef="actions">
@@ -105,7 +105,7 @@
             <mat-label>{{ i18n.t('tests.sample') }}</mat-label>
             <mat-select formControlName="sampleId">
               @for (sample of samples(); track sample.id) {
-                <mat-option [value]="sample.id">{{ sample.name || sample.id }}</mat-option>
+                <mat-option [value]="sample.id">{{ sample.name || i18n.t('samples.unnamed') }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -115,7 +115,7 @@
             <mat-select formControlName="testTypeId">
               @for (testType of testTypes(); track testType.id) {
                 <mat-option [value]="testType.id">
-                  {{ testType.name || testType.id }}
+                  {{ testType.name || i18n.t('tests.noTestType') }}
                   @if (testType.unit) {
                     <span>({{ testType.unit }})</span>
                   }
@@ -170,16 +170,12 @@
       <mat-card-content>
         <div class="detail-grid">
           <div>
-            <span>{{ i18n.t('tests.identifier') }}</span>
-            <strong>{{ detailedTest()?.id || '-' }}</strong>
-          </div>
-          <div>
             <span>{{ i18n.t('tests.sample') }}</span>
-            <strong>{{ detailedTest()?.sampleName || detailedTest()?.sampleId || '-' }}</strong>
+            <strong>{{ detailedTest()?.sampleName || '-' }}</strong>
           </div>
           <div>
             <span>{{ i18n.t('tests.testType') }}</span>
-            <strong>{{ detailedTest()?.testTypeName || detailedTest()?.testTypeId || '-' }}</strong>
+            <strong>{{ detailedTest()?.testTypeName || '-' }}</strong>
           </div>
           <div>
             <span>{{ i18n.t('tests.status') }}</span>
@@ -187,7 +183,7 @@
           </div>
           <div>
             <span>{{ i18n.t('tests.testedAt') }}</span>
-            <strong>{{ detailedTest()?.testedAt | date: 'medium' }}</strong>
+            <strong>{{ detailedTest()?.testedAt | date: 'medium' : undefined : i18n.dateLocale() }}</strong>
           </div>
         </div>
         <div class="context-panel">

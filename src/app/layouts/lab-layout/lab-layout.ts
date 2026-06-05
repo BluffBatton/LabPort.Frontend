@@ -67,11 +67,11 @@ export class LabLayout {
 
     if (profile) {
       const fullName = [profile.firstName, profile.lastName].filter(Boolean).join(' ');
-      return fullName || profile.email || profile.role || 'JWT session';
+      return fullName || profile.email || 'JWT session';
     }
 
     const session = this.auth.session();
-    return session?.displayName ?? session?.subject ?? 'JWT session';
+    return session?.displayName ?? 'JWT session';
   }
 
   setLocale(locale: SupportedLocale): void {

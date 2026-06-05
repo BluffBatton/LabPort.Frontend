@@ -1,4 +1,4 @@
-import { DatePipe, DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,41 +7,34 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTableModule } from '@angular/material/table';
 import { finalize } from 'rxjs';
 
-import { UserDto } from '../../../core/api/api.models';
 import { AdminApiService } from '../../../core/api/admin-api.service';
 import { LabportApiService } from '../../../core/api/labport-api.service';
 import { LocalizationService } from '../../../core/localization/localization.service';
 
 @Component({
-  selector: 'app-admin-users-page',
+  selector: 'app-admin-data-management-page',
   imports: [
-    DatePipe,
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    MatTableModule,
     ReactiveFormsModule
   ],
-  templateUrl: './admin-users-page.html',
-  styleUrl: './admin-users-page.scss'
+  templateUrl: './admin-data-management-page.html',
+  styleUrl: './admin-data-management-page.scss'
 })
-export class AdminUsersPage {
+export class AdminDataManagementPage {
   readonly i18n = inject(LocalizationService);
   readonly api = inject(LabportApiService);
-  readonly displayedColumns = ['name', 'email', 'phoneNumber', 'role', 'createdAt', 'lastLoginAt', 'actions'];
-  readonly users = signal<UserDto[]>([]);
-  readonly loading = signal(false);
   readonly exporting = signal(false);
   readonly errors = signal<string[]>([]);
   readonly message = signal<string | null>(null);
 
-  readonly reportForm = new FormGroup({
+  readonly exportForm = new FormGroup({
     from: new FormControl('', { nonNullable: true }),
     to: new FormControl('', { nonNullable: true })
   });
@@ -49,31 +42,12 @@ export class AdminUsersPage {
   private readonly adminApi = inject(AdminApiService);
   private readonly document = inject(DOCUMENT);
 
-  constructor() {
-    this.refresh();
-  }
-
-  refresh(): void {
-    this.loading.set(true);
-    this.errors.set([]);
-
-    this.adminApi
-      .getUsers()
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (users) => this.users.set([...users].sort((first, second) => this.i18n.compareText(this.fullName(first), this.fullName(second)))),
-        error: (error: unknown) => {
-          this.users.set([]);
-          this.addError('GET /api/Admin/GetAllUsers', error);
-        }
-      });
-  }
-
   exportUsers(): void {
-    const range = this.reportForm.getRawValue();
+    const range = this.exportForm.getRawValue();
 
     this.exporting.set(true);
     this.message.set(null);
+    this.errors.set([]);
 
     this.adminApi
       .exportUsersReport(this.toIsoDate(range.from), this.toIsoDate(range.to))
@@ -81,22 +55,17 @@ export class AdminUsersPage {
       .subscribe({
         next: (blob) => {
           this.downloadBlob(blob);
-          this.message.set(this.i18n.t('admin.users.exported'));
+          this.message.set(this.i18n.t('dataManagement.usersExported'));
         },
-        error: (error: unknown) => this.addError('GET /api/Admin/ExportUsersReport/export/users', error)
+        error: (error: unknown) => this.addError('GET /api/Admin/ExportUsersReport', error)
       });
   }
 
-  resetReportRange(): void {
-    this.reportForm.reset({
+  resetExportRange(): void {
+    this.exportForm.reset({
       from: '',
       to: ''
     });
-  }
-
-  fullName(user: UserDto): string {
-    const name = [user.firstName, user.lastName].filter(Boolean).join(' ');
-    return name || user.email || '-';
   }
 
   endpointErrors(): readonly string[] {
@@ -107,7 +76,7 @@ export class AdminUsersPage {
     const url = globalThis.URL.createObjectURL(blob);
     const anchor = this.document.createElement('a');
     anchor.href = url;
-    anchor.download = 'labport-users-report';
+    anchor.download = 'labport-users-report.csv';
     this.document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();

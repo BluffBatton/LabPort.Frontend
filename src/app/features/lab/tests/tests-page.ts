@@ -113,9 +113,9 @@ export class TestsPage {
     })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe(({ tests, samples, testTypes }) => {
-        this.tests.set(tests);
-        this.samples.set(samples);
-        this.testTypes.set(testTypes);
+        this.tests.set([...tests].sort((first, second) => this.i18n.compareText(first.subject, second.subject)));
+        this.samples.set([...samples].sort((first, second) => this.i18n.compareText(first.name, second.name)));
+        this.testTypes.set([...testTypes].sort((first, second) => this.i18n.compareText(first.name, second.name)));
       });
   }
 

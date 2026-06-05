@@ -21,7 +21,7 @@ import { LocalizationService } from '../../../core/localization/localization.ser
 export class AlertsPage {
   readonly i18n = inject(LocalizationService);
   readonly api = inject(LabportApiService);
-  readonly displayedColumns = ['createdAt', 'message', 'status', 'sensorReadingId', 'actions'];
+  readonly displayedColumns = ['createdAt', 'message', 'status', 'actions'];
   readonly alerts = signal<AlertDto[]>([]);
   readonly selectedAlert = signal<AlertDto | null>(null);
   readonly loading = signal(false);

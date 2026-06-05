@@ -55,7 +55,7 @@
 
             <ng-container matColumnDef="performedAt">
               <th mat-header-cell *matHeaderCellDef>{{ i18n.t('results.performedAt') }}</th>
-              <td mat-cell *matCellDef="let result">{{ result.performedAt | date: 'medium' }}</td>
+              <td mat-cell *matCellDef="let result">{{ result.performedAt | date: 'medium' : undefined : i18n.dateLocale() }}</td>
             </ng-container>
 
             <ng-container matColumnDef="actions">
@@ -93,7 +93,7 @@
             <mat-label>{{ i18n.t('results.test') }}</mat-label>
             <mat-select formControlName="testId">
               @for (test of tests(); track test.id) {
-                <mat-option [value]="test.id">{{ test.subject || test.sampleName || test.id }}</mat-option>
+                <mat-option [value]="test.id">{{ test.subject || test.sampleName || i18n.t('tests.unnamed') }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -164,12 +164,8 @@
       <mat-card-content>
         <div class="detail-grid">
           <div>
-            <span>{{ i18n.t('results.identifier') }}</span>
-            <strong>{{ detailedResult()?.id || '-' }}</strong>
-          </div>
-          <div>
             <span>{{ i18n.t('results.test') }}</span>
-            <strong>{{ detailedResult()?.testSubject || detailedResult()?.testId || '-' }}</strong>
+            <strong>{{ detailedResult()?.testSubject || '-' }}</strong>
           </div>
           <div>
             <span>{{ i18n.t('results.value') }}</span>
@@ -181,7 +177,7 @@
           </div>
           <div>
             <span>{{ i18n.t('results.performedAt') }}</span>
-            <strong>{{ detailedResult()?.performedAt | date: 'medium' }}</strong>
+            <strong>{{ detailedResult()?.performedAt | date: 'medium' : undefined : i18n.dateLocale() }}</strong>
           </div>
         </div>
         <div class="context-panel">

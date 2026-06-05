@@ -95,8 +95,8 @@ export class SamplesPage {
     })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe(({ samples, sources, container }) => {
-        this.samples.set(samples);
-        this.sources.set(sources);
+        this.samples.set([...samples].sort((first, second) => this.i18n.compareText(first.name, second.name)));
+        this.sources.set([...sources].sort((first, second) => this.i18n.compareText(first.name, second.name)));
         this.container.set(container);
       });
   }
@@ -170,7 +170,7 @@ export class SamplesPage {
       return;
     }
 
-    const sampleName = sample.name ?? sample.id;
+    const sampleName = sample.name || this.i18n.t('samples.unnamed');
 
     if (!globalThis.confirm(this.i18n.t('samples.deleteConfirm').replace('{name}', sampleName))) {
       return;

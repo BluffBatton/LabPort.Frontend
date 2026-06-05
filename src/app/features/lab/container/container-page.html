@@ -28,26 +28,36 @@
       <mat-card-content>
         <div class="metric-grid">
           <div>
-            <span>{{ i18n.t('container.temperatureMin') }}</span>
-            <strong>{{ value(container()?.temperatureMin, 'C') }}</strong>
+            <span>{{ i18n.t('container.allowedTemperatureRange') }}</span>
+            <strong>{{ range(container()?.temperatureMin, container()?.temperatureMax, 'C') }}</strong>
           </div>
           <div>
-            <span>{{ i18n.t('container.temperatureMax') }}</span>
-            <strong>{{ value(container()?.temperatureMax, 'C') }}</strong>
+            <span>{{ i18n.t('container.allowedHumidityRange') }}</span>
+            <strong>{{ range(container()?.humidityMin, container()?.humidityMax, '%') }}</strong>
           </div>
           <div>
-            <span>{{ i18n.t('container.humidityMin') }}</span>
-            <strong>{{ value(container()?.humidityMin, '%') }}</strong>
+            <span>{{ i18n.t('readings.temperature') }}</span>
+            <strong>{{ value(latestReading()?.temperature, 'C') }}</strong>
           </div>
           <div>
-            <span>{{ i18n.t('container.humidityMax') }}</span>
-            <strong>{{ value(container()?.humidityMax, '%') }}</strong>
+            <span>{{ i18n.t('readings.humidity') }}</span>
+            <strong>{{ value(latestReading()?.humidity, '%') }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('readings.lidPosition') }}</span>
+            <strong>{{ lidLabel(latestReading()?.lidPosition) }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('readings.createdAt') }}</span>
+            <strong>
+              {{ latestReading()?.createdAt ? (latestReading()?.createdAt | date: 'medium' : undefined : i18n.dateLocale()) : '-' }}
+            </strong>
           </div>
         </div>
 
         <div class="context-panel">
-          <strong>{{ i18n.t('container.identifier') }}</strong>
-          <span>{{ container()?.id || '-' }}</span>
+          <strong>{{ i18n.t('container.latestReading') }}</strong>
+          <span>{{ latestReading() ? api.endpointLabel('sensorReading', 'list') : i18n.t('container.noLatestReading') }}</span>
         </div>
       </mat-card-content>
     </mat-card>

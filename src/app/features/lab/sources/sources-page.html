@@ -108,7 +108,7 @@
             <mat-select formControlName="sourceTypeId">
               <mat-option value="">{{ i18n.t('sources.noType') }}</mat-option>
               @for (sourceType of sourceTypes(); track sourceType.id) {
-                <mat-option [value]="sourceType.id">{{ sourceType.name || sourceType.id }}</mat-option>
+                <mat-option [value]="sourceType.id">{{ sourceType.name || i18n.t('sources.noType') }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -148,12 +148,8 @@
       <mat-card-content>
         <div class="detail-grid">
           <div>
-            <span>{{ i18n.t('sources.identifier') }}</span>
-            <strong>{{ detailedSource()?.id || '-' }}</strong>
-          </div>
-          <div>
             <span>{{ i18n.t('sources.type') }}</span>
-            <strong>{{ detailedSource()?.sourceTypeName || detailedSource()?.sourceTypeId || '-' }}</strong>
+            <strong>{{ detailedSource()?.sourceTypeName || '-' }}</strong>
           </div>
           <div>
             <span>{{ i18n.t('sources.location') }}</span>

@@ -122,6 +122,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/dictionaries/admin-dictionaries-page').then((m) => m.AdminDictionariesPage)
       },
       {
+        path: 'data-management',
+        loadComponent: () => import('./features/admin/data-management/admin-data-management-page').then((m) => m.AdminDataManagementPage)
+      },
+      {
         path: 'audit',
         loadComponent: () => import('./shared/placeholder-page/placeholder-page').then((m) => m.PlaceholderPage),
         data: {

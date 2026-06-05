@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,7 +18,6 @@ import { LocalizationService } from '../../../core/localization/localization.ser
 @Component({
   selector: 'app-profile-page',
   imports: [
-    DatePipe,
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
@@ -96,7 +94,10 @@ export class ProfilePage {
             phoneNumber: profile.phoneNumber ?? ''
           });
         },
-        error: (error: unknown) => this.addError('GET /api/User/GetMyProfile', error)
+        error: (error: unknown) => {
+          this.profile.set(null);
+          this.addError('GET /api/User/GetMyProfile', error);
+        }
       });
   }
 
@@ -168,7 +169,22 @@ export class ProfilePage {
   fullName(): string {
     const profile = this.profile();
     const name = [profile?.firstName, profile?.lastName].filter(Boolean).join(' ');
-    return name || profile?.email || profile?.id || '-';
+    const session = this.auth.session();
+    return name || profile?.email || session?.displayName || '-';
+  }
+
+  email(): string {
+    const profile = this.profile();
+    const sessionEmail = this.auth.session()?.claims['email'];
+    return profile?.email || (typeof sessionEmail === 'string' ? sessionEmail : '-');
+  }
+
+  phone(): string {
+    return this.profile()?.phoneNumber || '-';
+  }
+
+  hasEditableProfile(): boolean {
+    return this.profile() !== null;
   }
 
   endpointErrors(): readonly string[] {

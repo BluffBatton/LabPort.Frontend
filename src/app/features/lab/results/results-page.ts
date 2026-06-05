@@ -102,8 +102,8 @@ export class ResultsPage {
     })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe(({ results, tests }) => {
-        this.results.set(results);
-        this.tests.set(tests);
+        this.results.set([...results].sort((first, second) => this.i18n.compareText(first.name, second.name)));
+        this.tests.set([...tests].sort((first, second) => this.i18n.compareText(first.subject, second.subject)));
       });
   }
 
