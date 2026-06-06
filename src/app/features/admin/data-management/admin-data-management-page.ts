@@ -57,7 +57,7 @@ export class AdminDataManagementPage {
           this.downloadBlob(blob);
           this.message.set(this.i18n.t('dataManagement.usersExported'));
         },
-        error: (error: unknown) => this.addError('GET /api/Admin/ExportUsersReport', error)
+        error: (error: unknown) => this.addError(this.i18n.t('dataManagement.exportUsers'), error)
       });
   }
 

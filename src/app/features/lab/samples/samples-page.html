@@ -25,7 +25,7 @@
     <mat-card appearance="outlined" class="table-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('samples.listTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('sample', 'list') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -92,7 +92,7 @@
           {{ selectedSample() ? i18n.t('samples.editTitle') : i18n.t('samples.createTitle') }}
         </mat-card-title>
         <mat-card-subtitle>
-          {{ selectedSample() ? api.endpointLabel('sample', 'update') : api.endpointLabel('sample', 'create') }}
+          {{ i18n.t('common.backendAction') }}
         </mat-card-subtitle>
       </mat-card-header>
 
@@ -138,7 +138,7 @@
     <mat-card appearance="outlined" class="details-card">
       <mat-card-header>
         <mat-card-title>{{ detailedSample()?.name || i18n.t('samples.detailsTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('sample', 'byId') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <div class="detail-grid">

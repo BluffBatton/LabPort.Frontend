@@ -45,14 +45,14 @@ export class AlertsPage {
         next: (alerts) => this.alerts.set(alerts),
         error: (error: unknown) => {
           this.alerts.set([]);
-          this.addError('GET /api/Alert/GetAllAlerts', error);
+          this.addError(this.i18n.t('alerts.listTitle'), error);
         }
       });
   }
 
   loadDetails(alert: AlertDto): void {
     if (!alert.id) {
-      this.addError('GET /api/Alert/GetAlertById/{Id}', new Error('Alert id is missing.'));
+      this.addError(this.i18n.t('alerts.detailsTitle'), new Error('Alert reference is missing.'));
       return;
     }
 
@@ -63,7 +63,7 @@ export class AlertsPage {
       .pipe(finalize(() => this.loadingDetailsId.set(null)))
       .subscribe({
         next: (selectedAlert) => this.selectedAlert.set(selectedAlert),
-        error: (error: unknown) => this.addError('GET /api/Alert/GetAlertById/{Id}', error)
+        error: (error: unknown) => this.addError(this.i18n.t('alerts.detailsTitle'), error)
       });
   }
 

@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { LabportApiService } from '../../../core/api/labport-api.service';
+import { ADMIN_ROLES } from '../../../core/auth/auth.models';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LocalizationService } from '../../../core/localization/localization.service';
 import { SupportedLocale } from '../../../core/localization/translations';
@@ -50,7 +52,6 @@ export class LoginPage {
 
   readonly returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
   readonly loginAvailable = this.api.isAvailable('auth', 'login');
-  readonly loginEndpointLabel = this.api.endpointLabel('auth', 'login');
 
   isSubmitDisabled(): boolean {
     return this.loading() || this.form.invalid || !this.loginAvailable;
@@ -77,12 +78,42 @@ export class LoginPage {
     this.auth.login(this.form.getRawValue()).subscribe({
       next: () => {
         this.loading.set(false);
-        void this.router.navigateByUrl(this.returnUrl ?? '/lab/dashboard');
+        const defaultRoute = this.auth.hasAnyRole(ADMIN_ROLES) ? '/admin' : '/lab/samples';
+        void this.router.navigateByUrl(this.returnUrl ?? defaultRoute);
       },
       error: (error: unknown) => {
         this.loading.set(false);
-        this.message.set(error instanceof Error ? error.message : this.i18n.t('auth.login.backendMissing'));
+        this.message.set(this.loginErrorMessage(error));
       }
     });
+  }
+
+  private loginErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      return `${this.i18n.t('auth.login.failed')}: ${error.status} ${this.backendMessage(error.error)}`;
+    }
+
+    return error instanceof Error ? error.message : this.i18n.t('auth.login.backendMissing');
+  }
+
+  private backendMessage(errorBody: unknown): string {
+    if (!errorBody) {
+      return this.i18n.t('auth.login.noBackendMessage');
+    }
+
+    if (typeof errorBody === 'string') {
+      return errorBody;
+    }
+
+    if (typeof errorBody === 'object') {
+      const body = errorBody as Record<string, unknown>;
+      const message = body['message'] ?? body['title'] ?? body['detail'] ?? body['error'];
+
+      if (typeof message === 'string') {
+        return message;
+      }
+    }
+
+    return this.i18n.t('auth.login.noBackendMessage');
   }
 }

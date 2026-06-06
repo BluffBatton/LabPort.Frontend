@@ -51,7 +51,7 @@ export class AdminDashboardPage {
         next: (stats) => this.stats.set(stats),
         error: (error: unknown) => {
           this.stats.set(null);
-          this.addError('GET /api/Admin/GetStatistics', error);
+          this.addError(this.i18n.t('pages.adminDashboard.title'), error);
         }
       });
   }

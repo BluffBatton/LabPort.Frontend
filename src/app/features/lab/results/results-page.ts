@@ -89,13 +89,13 @@ export class ResultsPage {
     forkJoin({
       results: this.labApi.getTestResults().pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/TestResult/GetAllTestResults', error);
+          this.addError(this.i18n.t('results.listTitle'), error);
           return of([] as TestResultDto[]);
         })
       ),
       tests: this.labApi.getTests().pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/Test/GetAllTests', error);
+          this.addError(this.i18n.t('tests.listTitle'), error);
           return of([] as TestDto[]);
         })
       )
@@ -139,13 +139,13 @@ export class ResultsPage {
           this.resetForm();
           this.refresh();
         },
-        error: (error: unknown) => this.addError('POST /api/TestResult/CreateTestResult', error)
+        error: (error: unknown) => this.addError(this.i18n.t('results.createTitle'), error)
     });
   }
 
   loadDetails(result: TestResultDto): void {
     if (!result.id) {
-      this.addError('GET /api/TestResult/GetTestResultById/{id}', new Error('Test result id is missing.'));
+      this.addError(this.i18n.t('results.detailsTitle'), new Error('Test result reference is missing.'));
       return;
     }
 
@@ -156,7 +156,7 @@ export class ResultsPage {
       .pipe(finalize(() => this.loadingDetailsId.set(null)))
       .subscribe({
         next: (detailedResult) => this.detailedResult.set(detailedResult),
-        error: (error: unknown) => this.addError('GET /api/TestResult/GetTestResultById/{id}', error)
+        error: (error: unknown) => this.addError(this.i18n.t('results.detailsTitle'), error)
       });
   }
 

@@ -82,7 +82,7 @@ export class ReadingsPage {
         next: (readings) => this.readings.set(readings),
         error: (error: unknown) => {
           this.readings.set([]);
-          this.addError('GET /api/SensorReading/GetAllSensorReadings/{take}', error);
+          this.addError(this.i18n.t('readings.listTitle'), error);
         }
       });
   }
@@ -115,13 +115,13 @@ export class ReadingsPage {
           });
           this.refresh();
         },
-        error: (error: unknown) => this.addError('POST /api/SensorReading/CreateSensor', error)
+        error: (error: unknown) => this.addError(this.i18n.t('readings.createTitle'), error)
       });
   }
 
   loadDetails(reading: SensorReadingDto): void {
     if (!reading.id) {
-      this.addError('GET /api/SensorReading/GetSensorReadingById/{Id}', new Error('Sensor reading id is missing.'));
+      this.addError(this.i18n.t('readings.detailsTitle'), new Error('Sensor reading reference is missing.'));
       return;
     }
 
@@ -132,7 +132,7 @@ export class ReadingsPage {
       .pipe(finalize(() => this.loadingDetailsId.set(null)))
       .subscribe({
         next: (selectedReading) => this.selectedReading.set(selectedReading),
-        error: (error: unknown) => this.addError('GET /api/SensorReading/GetSensorReadingById/{Id}', error)
+        error: (error: unknown) => this.addError(this.i18n.t('readings.detailsTitle'), error)
       });
   }
 

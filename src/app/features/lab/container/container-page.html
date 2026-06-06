@@ -22,7 +22,7 @@
     <mat-card appearance="outlined" class="summary-card">
       <mat-card-header>
         <mat-card-title>{{ container()?.label || i18n.t('container.current') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('container', 'current') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -57,7 +57,7 @@
 
         <div class="context-panel">
           <strong>{{ i18n.t('container.latestReading') }}</strong>
-          <span>{{ latestReading() ? api.endpointLabel('sensorReading', 'list') : i18n.t('container.noLatestReading') }}</span>
+          <span>{{ latestReading() ? i18n.t('common.backendData') : i18n.t('container.noLatestReading') }}</span>
         </div>
       </mat-card-content>
     </mat-card>
@@ -65,7 +65,7 @@
     <mat-card appearance="outlined" class="form-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('container.settingsTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('container', 'update') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendAction') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>

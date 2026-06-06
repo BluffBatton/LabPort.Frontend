@@ -9,7 +9,7 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('auth.login.title') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('auth.login.backendReady') }}: {{ loginEndpointLabel }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendAuth') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -42,7 +42,7 @@
           </div>
         } @else {
           <div class="endpoint-block">
-            <strong>{{ i18n.t('auth.login.backendReady') }}</strong>
+            <strong>{{ i18n.t('common.appName') }}</strong>
             <p>{{ i18n.t('auth.login.endpointReady') }}</p>
             @if (returnUrl) {
               <small>{{ i18n.t('auth.login.returnHint') }} {{ returnUrl }}</small>

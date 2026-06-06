@@ -22,7 +22,7 @@
     <mat-card appearance="outlined" class="table-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('alerts.listTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('alert', 'list') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -72,7 +72,7 @@
     <mat-card appearance="outlined" class="details-card">
       <mat-card-header>
         <mat-card-title>{{ selectedAlert()?.message || i18n.t('alerts.detailsTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('alert', 'byId') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         @if (selectedAlert()) {

@@ -81,13 +81,13 @@ export class AdminDictionariesPage {
     forkJoin({
       sourceTypes: this.adminApi.getSourceTypes().pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/SourceType/GetAllSourceTypes', error);
+          this.addError(this.i18n.t('admin.dictionaries.sourceTypes'), error);
           return of([] as SourceTypeDto[]);
         })
       ),
       testTypes: this.adminApi.getTestTypes().pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/Test/GetTestTypeQuery', error);
+          this.addError(this.i18n.t('admin.dictionaries.testTypes'), error);
           return of([] as TestTypeDto[]);
         })
       )
@@ -117,13 +117,13 @@ export class AdminDictionariesPage {
           this.sourceTypeForm.reset({ name: '' });
           this.refresh();
         },
-        error: (error: unknown) => this.addError('POST /api/Admin/CreateSourceType', error)
+        error: (error: unknown) => this.addError(this.i18n.t('admin.dictionaries.createSourceType'), error)
       });
   }
 
   deleteSourceType(sourceType: SourceTypeDto): void {
     if (!sourceType.id) {
-      this.addError('DELETE /api/Admin/DeleteSourceType/{id}', new Error('Source type id is missing.'));
+      this.addError(this.i18n.t('admin.dictionaries.delete'), new Error('Source type reference is missing.'));
       return;
     }
 
@@ -144,7 +144,7 @@ export class AdminDictionariesPage {
           this.message.set(this.i18n.t('admin.dictionaries.sourceTypeDeleted'));
           this.refresh();
         },
-        error: (error: unknown) => this.addError('DELETE /api/Admin/DeleteSourceType/{id}', error)
+        error: (error: unknown) => this.addError(this.i18n.t('admin.dictionaries.delete'), error)
       });
   }
 
@@ -171,13 +171,13 @@ export class AdminDictionariesPage {
           });
           this.refresh();
         },
-        error: (error: unknown) => this.addError('POST /api/Admin/CreateTestType', error)
+        error: (error: unknown) => this.addError(this.i18n.t('admin.dictionaries.createTestType'), error)
       });
   }
 
   deleteTestType(testType: TestTypeDto): void {
     if (!testType.id) {
-      this.addError('DELETE /api/Admin/DeleteTestType/{id}', new Error('Test type id is missing.'));
+      this.addError(this.i18n.t('admin.dictionaries.delete'), new Error('Test type reference is missing.'));
       return;
     }
 
@@ -198,7 +198,7 @@ export class AdminDictionariesPage {
           this.message.set(this.i18n.t('admin.dictionaries.testTypeDeleted'));
           this.refresh();
         },
-        error: (error: unknown) => this.addError('DELETE /api/Admin/DeleteTestType/{id}', error)
+        error: (error: unknown) => this.addError(this.i18n.t('admin.dictionaries.delete'), error)
       });
   }
 

@@ -94,19 +94,19 @@ export class TestsPage {
     forkJoin({
       tests: this.labApi.getTests().pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/Test/GetAllTests', error);
+          this.addError(this.i18n.t('tests.listTitle'), error);
           return of([] as TestDto[]);
         })
       ),
       samples: this.labApi.getSamples().pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/Sample/GetAllSamples', error);
+          this.addError(this.i18n.t('samples.listTitle'), error);
           return of([] as SampleDto[]);
         })
       ),
       testTypes: this.labApi.getTestTypes().pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/Test/GetTestTypeQuery', error);
+          this.addError(this.i18n.t('admin.dictionaries.testTypes'), error);
           return of([] as TestTypeDto[]);
         })
       )
@@ -153,7 +153,7 @@ export class TestsPage {
 
   loadDetails(test: TestDto): void {
     if (!test.id) {
-      this.addError('GET /api/Test/GetTestById/{id}', new Error('Test id is missing.'));
+      this.addError(this.i18n.t('tests.detailsTitle'), new Error('Test reference is missing.'));
       return;
     }
 
@@ -164,7 +164,7 @@ export class TestsPage {
       .pipe(finalize(() => this.loadingDetailsId.set(null)))
       .subscribe({
         next: (detailedTest) => this.detailedTest.set(detailedTest),
-        error: (error: unknown) => this.addError('GET /api/Test/GetTestById/{id}', error)
+        error: (error: unknown) => this.addError(this.i18n.t('tests.detailsTitle'), error)
       });
   }
 
@@ -188,7 +188,7 @@ export class TestsPage {
         this.startCreate();
         this.refresh();
       },
-      error: (error: unknown) => this.addError(selectedTest ? 'PATCH /api/Test/UpdateTest/{id}' : 'POST /api/Test/CreateTest', error)
+      error: (error: unknown) => this.addError(this.i18n.t('tests.save'), error)
     });
   }
 

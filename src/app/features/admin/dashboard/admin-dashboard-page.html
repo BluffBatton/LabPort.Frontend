@@ -33,7 +33,7 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.dashboard.totalUsers') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('admin', 'dashboard') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ metric(stats()?.totalUsers) }}</strong>
@@ -53,7 +53,7 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.dashboard.totalSamples') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('admin', 'dashboard') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ metric(stats()?.totalSamples) }}</strong>
@@ -63,7 +63,7 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.dashboard.totalTests') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('admin', 'dashboard') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ metric(stats()?.totalTests) }}</strong>
@@ -73,7 +73,7 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.dashboard.totalAlerts') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('admin', 'dashboard') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ metric(stats()?.totalAlerts) }}</strong>

@@ -96,7 +96,7 @@ export class ProfilePage {
         },
         error: (error: unknown) => {
           this.profile.set(null);
-          this.addError('GET /api/User/GetMyProfile', error);
+          this.addError(this.i18n.t('profile.profileTitle'), error);
         }
       });
   }
@@ -118,7 +118,7 @@ export class ProfilePage {
           this.message.set(this.i18n.t('profile.saved'));
           this.refresh();
         },
-        error: (error: unknown) => this.addError('PATCH /api/User/UpdateMyProfile', error)
+        error: (error: unknown) => this.addError(this.i18n.t('profile.save'), error)
       });
   }
 
@@ -142,7 +142,7 @@ export class ProfilePage {
             newPassword: ''
           });
         },
-        error: (error: unknown) => this.addError('PATCH /api/User/UpdateMyPassword', error)
+        error: (error: unknown) => this.addError(this.i18n.t('profile.updatePassword'), error)
       });
   }
 
@@ -162,7 +162,7 @@ export class ProfilePage {
           this.auth.logout();
           void this.router.navigate(['/auth/login']);
         },
-        error: (error: unknown) => this.addError('DELETE /api/User/DeleteMyProfile', error)
+        error: (error: unknown) => this.addError(this.i18n.t('profile.delete'), error)
       });
   }
 

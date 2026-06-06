@@ -78,13 +78,13 @@ export class SourcesPage {
     forkJoin({
       sources: this.labApi.getSources().pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/Source/GetAllSources', error);
+          this.addError(this.i18n.t('sources.listTitle'), error);
           return of([] as SourceDto[]);
         })
       ),
       sourceTypes: this.labApi.getSourceTypes().pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/SourceType/GetAllSourceTypes', error);
+          this.addError(this.i18n.t('admin.dictionaries.sourceTypes'), error);
           return of([] as SourceTypeDto[]);
         })
       )
@@ -122,7 +122,7 @@ export class SourcesPage {
 
   loadDetails(source: SourceDto): void {
     if (!source.id) {
-      this.addError('GET /api/Source/GetSourceById/{Id}', new Error('Source id is missing.'));
+      this.addError(this.i18n.t('sources.detailsTitle'), new Error('Source reference is missing.'));
       return;
     }
 
@@ -133,7 +133,7 @@ export class SourcesPage {
       .pipe(finalize(() => this.loadingDetailsId.set(null)))
       .subscribe({
         next: (detailedSource) => this.detailedSource.set(detailedSource),
-        error: (error: unknown) => this.addError('GET /api/Source/GetSourceById/{Id}', error)
+        error: (error: unknown) => this.addError(this.i18n.t('sources.detailsTitle'), error)
       });
   }
 
@@ -157,13 +157,13 @@ export class SourcesPage {
         this.startCreate();
         this.refresh();
       },
-      error: (error: unknown) => this.addError(selectedSource ? 'PATCH /api/Source/UpdateSource/{Id}' : 'POST /api/Source/CreateSource', error)
+      error: (error: unknown) => this.addError(this.i18n.t('sources.save'), error)
     });
   }
 
   deleteSource(source: SourceDto): void {
     if (!source.id) {
-      this.addError('DELETE /api/Source/DeleteSource/{Id}', new Error('Source id is missing.'));
+      this.addError(this.i18n.t('sources.delete'), new Error('Source reference is missing.'));
       return;
     }
 
@@ -187,7 +187,7 @@ export class SourcesPage {
           }
           this.refresh();
         },
-        error: (error: unknown) => this.addError('DELETE /api/Source/DeleteSource/{Id}', error)
+        error: (error: unknown) => this.addError(this.i18n.t('sources.delete'), error)
       });
   }
 

@@ -22,7 +22,7 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('lab.dashboard.temperature') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('statistics', 'containerReadings') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ metricValue(data().stats?.tempAvg, 'C') }}</strong>
@@ -33,7 +33,7 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('lab.dashboard.humidity') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('statistics', 'containerReadings') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ metricValue(data().stats?.humAvg, '%') }}</strong>
@@ -44,7 +44,7 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('lab.dashboard.samples') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('sample', 'list') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ data().samples.length }}</strong>
@@ -54,7 +54,7 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('lab.dashboard.tests') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('test', 'list') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ data().tests.length }}</strong>
@@ -64,7 +64,7 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('lab.dashboard.results') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('testResult', 'list') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ data().results.length }}</strong>
@@ -88,7 +88,7 @@
   <mat-card appearance="outlined" class="readings-card">
     <mat-card-header>
       <mat-card-title>{{ i18n.t('lab.dashboard.recentReadings') }}</mat-card-title>
-      <mat-card-subtitle>{{ api.endpointLabel('statistics', 'containerReadings') }}</mat-card-subtitle>
+      <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       @if (recentReadings().length) {

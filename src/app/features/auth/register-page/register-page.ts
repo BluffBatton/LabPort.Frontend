@@ -93,7 +93,6 @@ export class RegisterPage {
   private readonly router = inject(Router);
 
   readonly registerAvailable = this.api.isAvailable('auth', 'register');
-  readonly registerEndpointLabel = this.api.endpointLabel('auth', 'register');
 
   isSubmitDisabled(): boolean {
     return this.loading() || this.form.invalid || !this.registerAvailable;

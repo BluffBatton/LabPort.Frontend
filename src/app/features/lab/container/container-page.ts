@@ -67,13 +67,13 @@ export class ContainerPage {
     forkJoin({
       container: this.labApi.getContainer().pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/Container/GetContainer', error);
+          this.addError(this.i18n.t('pages.container.title'), error);
           return of(null);
         })
       ),
       readings: this.labApi.getSensorReadings(1).pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/SensorReading/GetAllSensorReadings/1', error);
+          this.addError(this.i18n.t('container.latestReading'), error);
           return of([] as SensorReadingDto[]);
         })
       )
@@ -111,7 +111,7 @@ export class ContainerPage {
           this.message.set(this.i18n.t('container.saved'));
           this.refresh();
         },
-        error: (error: unknown) => this.addError('PATCH /api/Container/UpdateContainer', error)
+        error: (error: unknown) => this.addError(this.i18n.t('container.save'), error)
       });
   }
 

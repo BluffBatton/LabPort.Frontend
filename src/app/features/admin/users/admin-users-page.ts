@@ -64,7 +64,7 @@ export class AdminUsersPage {
         next: (users) => this.users.set([...users].sort((first, second) => this.i18n.compareText(this.fullName(first), this.fullName(second)))),
         error: (error: unknown) => {
           this.users.set([]);
-          this.addError('GET /api/Admin/GetAllUsers', error);
+          this.addError(this.i18n.t('admin.users.listTitle'), error);
         }
       });
   }
@@ -83,7 +83,7 @@ export class AdminUsersPage {
           this.downloadBlob(blob);
           this.message.set(this.i18n.t('admin.users.exported'));
         },
-        error: (error: unknown) => this.addError('GET /api/Admin/ExportUsersReport/export/users', error)
+        error: (error: unknown) => this.addError(this.i18n.t('admin.users.export'), error)
       });
   }
 

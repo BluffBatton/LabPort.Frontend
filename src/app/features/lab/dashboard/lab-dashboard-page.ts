@@ -47,10 +47,10 @@ export class LabDashboardPage {
     this.errors.set([]);
 
     forkJoin({
-      stats: this.labApi.getContainerReadingStats().pipe(this.fallback('GET /api/Statistics/GetContainerReadingsStats', null)),
-      samples: this.labApi.getSamples().pipe(this.fallback('GET /api/Sample/GetAllSamples', [] as SampleDto[])),
-      tests: this.labApi.getTests().pipe(this.fallback('GET /api/Test/GetAllTests', [] as TestDto[])),
-      results: this.labApi.getTestResults().pipe(this.fallback('GET /api/TestResult/GetAllTestResults', [] as TestResultDto[]))
+      stats: this.labApi.getContainerReadingStats().pipe(this.fallback(this.i18n.t('lab.dashboard.recentReadings'), null)),
+      samples: this.labApi.getSamples().pipe(this.fallback(this.i18n.t('lab.dashboard.samples'), [] as SampleDto[])),
+      tests: this.labApi.getTests().pipe(this.fallback(this.i18n.t('lab.dashboard.tests'), [] as TestDto[])),
+      results: this.labApi.getTestResults().pipe(this.fallback(this.i18n.t('lab.dashboard.results'), [] as TestResultDto[]))
     }).subscribe((data) => {
       this.data.set(data);
       this.loading.set(false);

@@ -76,19 +76,19 @@ export class SamplesPage {
     forkJoin({
       samples: this.labApi.getSamples().pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/Sample/GetAllSamples', error);
+          this.addError(this.i18n.t('samples.listTitle'), error);
           return of([] as SampleDto[]);
         })
       ),
       sources: this.labApi.getSources().pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/Source/GetAllSources', error);
+          this.addError(this.i18n.t('sources.listTitle'), error);
           return of([] as SourceDto[]);
         })
       ),
       container: this.labApi.getContainer().pipe(
         catchError((error: unknown) => {
-          this.addError('GET /api/Container/GetContainer', error);
+          this.addError(this.i18n.t('pages.container.title'), error);
           return of(null);
         })
       )
@@ -123,7 +123,7 @@ export class SamplesPage {
 
   loadDetails(sample: SampleDto): void {
     if (!sample.id) {
-      this.addError('GET /api/Sample/GetSampleById/{Id}', new Error('Sample id is missing.'));
+      this.addError(this.i18n.t('samples.detailsTitle'), new Error('Sample reference is missing.'));
       return;
     }
 
@@ -134,7 +134,7 @@ export class SamplesPage {
       .pipe(finalize(() => this.loadingDetailsId.set(null)))
       .subscribe({
         next: (detailedSample) => this.detailedSample.set(detailedSample),
-        error: (error: unknown) => this.addError('GET /api/Sample/GetSampleById/{Id}', error)
+        error: (error: unknown) => this.addError(this.i18n.t('samples.detailsTitle'), error)
       });
   }
 
@@ -160,13 +160,13 @@ export class SamplesPage {
         this.startCreate();
         this.refresh();
       },
-      error: (error: unknown) => this.addError(selectedSample ? 'PATCH /api/Sample/UpdateSample/{id}' : 'POST /api/Sample/CreateSample', error)
+      error: (error: unknown) => this.addError(this.i18n.t('samples.save'), error)
     });
   }
 
   deleteSample(sample: SampleDto): void {
     if (!sample.id) {
-      this.addError('DELETE /api/Sample/DeleteSample/{id}', new Error('Sample id is missing.'));
+      this.addError(this.i18n.t('samples.delete'), new Error('Sample reference is missing.'));
       return;
     }
 
@@ -190,7 +190,7 @@ export class SamplesPage {
           }
           this.refresh();
         },
-        error: (error: unknown) => this.addError('DELETE /api/Sample/DeleteSample/{id}', error)
+        error: (error: unknown) => this.addError(this.i18n.t('samples.delete'), error)
       });
   }
 

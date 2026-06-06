@@ -22,7 +22,7 @@
     <mat-card appearance="outlined" class="summary-card">
       <mat-card-header>
         <mat-card-title>{{ fullName() }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('user', 'profile') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
         <mat-card-content>
@@ -56,7 +56,7 @@
       <mat-card appearance="outlined" class="form-card">
         <mat-card-header>
           <mat-card-title>{{ i18n.t('profile.profileTitle') }}</mat-card-title>
-          <mat-card-subtitle>{{ api.endpointLabel('user', 'updateProfile') }}</mat-card-subtitle>
+          <mat-card-subtitle>{{ i18n.t('common.backendAction') }}</mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>
@@ -98,7 +98,7 @@
     <mat-card appearance="outlined" class="form-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('profile.passwordTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('user', 'updatePassword') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendAction') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -125,7 +125,7 @@
     <mat-card appearance="outlined" class="danger-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('profile.deleteTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('user', 'deleteProfile') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendAction') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>

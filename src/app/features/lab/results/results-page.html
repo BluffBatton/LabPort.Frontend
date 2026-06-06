@@ -25,7 +25,7 @@
     <mat-card appearance="outlined" class="table-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('results.listTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('testResult', 'list') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -84,7 +84,7 @@
     <mat-card appearance="outlined" class="form-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('results.createTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('testResult', 'create') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendAction') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -159,7 +159,7 @@
     <mat-card appearance="outlined" class="details-card">
       <mat-card-header>
         <mat-card-title>{{ detailedResult()?.name || i18n.t('results.detailsTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ api.endpointLabel('testResult', 'byId') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <div class="detail-grid">
