@@ -12,6 +12,22 @@
   --lp-warning: #8a5a00;
   --lp-admin: #314b7c;
   --lp-font: 'Segoe UI', Roboto, Arial, sans-serif;
+  --mdc-typography-font-family: var(--lp-font);
+  --mat-sys-body-large-font: var(--lp-font);
+  --mat-sys-body-medium-font: var(--lp-font);
+  --mat-sys-body-small-font: var(--lp-font);
+  --mat-sys-display-large-font: var(--lp-font);
+  --mat-sys-display-medium-font: var(--lp-font);
+  --mat-sys-display-small-font: var(--lp-font);
+  --mat-sys-headline-large-font: var(--lp-font);
+  --mat-sys-headline-medium-font: var(--lp-font);
+  --mat-sys-headline-small-font: var(--lp-font);
+  --mat-sys-label-large-font: var(--lp-font);
+  --mat-sys-label-medium-font: var(--lp-font);
+  --mat-sys-label-small-font: var(--lp-font);
+  --mat-sys-title-large-font: var(--lp-font);
+  --mat-sys-title-medium-font: var(--lp-font);
+  --mat-sys-title-small-font: var(--lp-font);
   color-scheme: light;
 }
 
@@ -35,16 +51,38 @@ button,
 input,
 textarea,
 select,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+label,
+small,
+strong,
+span,
+.mat-typography,
 .mat-mdc-button-base,
 .mat-mdc-card,
+.mat-mdc-card-title,
+.mat-mdc-card-subtitle,
 .mat-mdc-table,
 .mat-mdc-form-field,
+.mat-mdc-form-field label,
+.mat-mdc-input-element,
 .mat-mdc-select,
+.mat-mdc-select-value,
 .mat-mdc-option,
 .mat-mdc-list-item,
 .mat-mdc-chip,
-.mat-mdc-menu-item {
-  font-family: var(--lp-font);
+.mat-mdc-menu-item,
+.mdc-floating-label,
+.mdc-button,
+.mdc-text-field,
+.mdc-list-item__primary-text,
+.mdc-list-item__secondary-text {
+  font-family: var(--lp-font) !important;
 }
 
 a {
