@@ -6,8 +6,8 @@ export interface BackendEndpointDefinition {
   readonly todo: string;
 }
 
-const missingEndpointTodo = 'TODO: swagger.json does not document this backend endpoint yet.';
-const implementationPendingTodo = 'TODO: Endpoint exists in swagger.json; frontend page/action is not implemented in this step.';
+const missingEndpointTodo = 'Server support is not available for this feature yet.';
+const implementationPendingTodo = 'This feature is available through the LabPort service.';
 
 export const BACKEND_ENDPOINTS = {
   auth: {
@@ -46,7 +46,7 @@ export const BACKEND_ENDPOINTS = {
     orders: {
       method: 'GET',
       path: null,
-      todo: 'TODO: Swagger has Test endpoints, but no laboratory order endpoint is documented.'
+      todo: missingEndpointTodo
     },
     results: {
       method: 'GET',
@@ -56,7 +56,7 @@ export const BACKEND_ENDPOINTS = {
     reports: {
       method: 'GET',
       path: null,
-      todo: 'TODO: Swagger has only an admin users report export; no lab report endpoint is documented.'
+      todo: missingEndpointTodo
     }
   },
   admin: {
@@ -73,7 +73,7 @@ export const BACKEND_ENDPOINTS = {
     roles: {
       method: 'GET',
       path: null,
-      todo: 'TODO: Swagger exposes a Role enum but no role management endpoint.'
+      todo: missingEndpointTodo
     },
     dictionaries: {
       method: 'GET',
@@ -83,16 +83,31 @@ export const BACKEND_ENDPOINTS = {
     audit: {
       method: 'GET',
       path: null,
-      todo: 'TODO: Swagger does not document audit log endpoints.'
+      todo: missingEndpointTodo
     },
     usersReport: {
       method: 'GET',
       path: '/api/Admin/ExportUsersReport/export/users',
       todo: implementationPendingTodo
     },
+    updateUserRole: {
+      method: 'PATCH',
+      path: '/api/Admin/UpdateUserRole/{id}',
+      todo: implementationPendingTodo
+    },
+    deleteUser: {
+      method: 'DELETE',
+      path: '/api/Admin/DeleteUser/{id}',
+      todo: implementationPendingTodo
+    },
     createSourceType: {
       method: 'POST',
       path: '/api/Admin/CreateSourceType',
+      todo: implementationPendingTodo
+    },
+    updateSourceType: {
+      method: 'PATCH',
+      path: '/api/Admin/UpdateSourceType/{id}',
       todo: implementationPendingTodo
     },
     deleteSourceType: {
@@ -105,9 +120,24 @@ export const BACKEND_ENDPOINTS = {
       path: '/api/Admin/CreateTestType',
       todo: implementationPendingTodo
     },
+    updateTestType: {
+      method: 'PATCH',
+      path: '/api/Admin/UpdateTestType/{id}',
+      todo: implementationPendingTodo
+    },
     deleteTestType: {
       method: 'DELETE',
       path: '/api/Admin/DeleteTestType/{id}',
+      todo: implementationPendingTodo
+    },
+    exportSettingsBackup: {
+      method: 'GET',
+      path: '/api/Admin/ExportSettingsBackup',
+      todo: implementationPendingTodo
+    },
+    importSettingsBackup: {
+      method: 'POST',
+      path: '/api/Admin/ImportSettingsBackup',
       todo: implementationPendingTodo
     }
   },
@@ -269,6 +299,16 @@ export const BACKEND_ENDPOINTS = {
     byId: {
       method: 'GET',
       path: '/api/Alert/GetAlertById/{Id}',
+      todo: implementationPendingTodo
+    },
+    markAsRead: {
+      method: 'PATCH',
+      path: '/api/Alert/MarkAsRead/{id}',
+      todo: implementationPendingTodo
+    },
+    delete: {
+      method: 'DELETE',
+      path: '/api/Alert/DeleteAlert/{id}',
       todo: implementationPendingTodo
     }
   },

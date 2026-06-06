@@ -32,7 +32,7 @@ export class LabportApiService {
 
   unavailableMessage(area: string, name: string): string {
     const endpoint = this.endpoint(area, name);
-    return endpoint?.todo ?? 'TODO: Add this endpoint to swagger.json before wiring the frontend action.';
+    return endpoint?.todo ?? 'Server support is not available for this feature yet.';
   }
 
   endpointLabel(area: string, name: string): string {

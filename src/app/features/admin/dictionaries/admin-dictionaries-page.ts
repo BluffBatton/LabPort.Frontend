@@ -12,10 +12,13 @@ import { catchError, finalize, forkJoin, of } from 'rxjs';
 import {
   SourceTypeCreateDto,
   SourceTypeDto,
+  SourceTypeUpdateDto,
   TestTypeCreateDto,
-  TestTypeDto
+  TestTypeDto,
+  TestTypeUpdateDto
 } from '../../../core/api/api.models';
 import { AdminApiService } from '../../../core/api/admin-api.service';
+import { readableApiError } from '../../../core/api/api-error';
 import { LabportApiService } from '../../../core/api/labport-api.service';
 import { LocalizationService } from '../../../core/localization/localization.service';
 
@@ -46,20 +49,22 @@ export class AdminDictionariesPage {
   readonly savingTestType = signal(false);
   readonly deletingSourceTypeId = signal<string | null>(null);
   readonly deletingTestTypeId = signal<string | null>(null);
+  readonly selectedSourceType = signal<SourceTypeDto | null>(null);
+  readonly selectedTestType = signal<TestTypeDto | null>(null);
   readonly errors = signal<string[]>([]);
   readonly message = signal<string | null>(null);
 
   readonly sourceTypeForm = new FormGroup({
     name: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required]
+      validators: [Validators.required, Validators.pattern(/\S/)]
     })
   });
 
   readonly testTypeForm = new FormGroup({
     name: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required]
+      validators: [Validators.required, Validators.pattern(/\S/)]
     }),
     referenceMin: new FormControl<number | null>(null),
     referenceMax: new FormControl<number | null>(null),
@@ -99,26 +104,46 @@ export class AdminDictionariesPage {
       });
   }
 
-  createSourceType(): void {
+  saveSourceType(): void {
     if (this.sourceTypeForm.invalid) {
       this.sourceTypeForm.markAllAsTouched();
       return;
     }
 
+    const selectedSourceType = this.selectedSourceType();
+    const request =
+      selectedSourceType?.id
+        ? this.adminApi.updateSourceType(selectedSourceType.id, this.sourceTypeUpdatePayload())
+        : this.adminApi.createSourceType(this.sourceTypePayload());
+
     this.savingSourceType.set(true);
     this.message.set(null);
 
-    this.adminApi
-      .createSourceType(this.sourceTypePayload())
-      .pipe(finalize(() => this.savingSourceType.set(false)))
-      .subscribe({
-        next: () => {
-          this.message.set(this.i18n.t('admin.dictionaries.sourceTypeCreated'));
-          this.sourceTypeForm.reset({ name: '' });
-          this.refresh();
-        },
-        error: (error: unknown) => this.addError(this.i18n.t('admin.dictionaries.createSourceType'), error)
-      });
+    request.pipe(finalize(() => this.savingSourceType.set(false))).subscribe({
+      next: () => {
+        this.message.set(
+          selectedSourceType
+            ? this.i18n.t('admin.dictionaries.sourceTypeUpdated')
+            : this.i18n.t('admin.dictionaries.sourceTypeCreated')
+        );
+        this.cancelSourceTypeEdit();
+        this.refresh();
+      },
+      error: (error: unknown) => this.addError(this.i18n.t('admin.dictionaries.saveSourceType'), error)
+    });
+  }
+
+  editSourceType(sourceType: SourceTypeDto): void {
+    this.selectedSourceType.set(sourceType);
+    this.message.set(null);
+    this.sourceTypeForm.reset({
+      name: sourceType.name ?? ''
+    });
+  }
+
+  cancelSourceTypeEdit(): void {
+    this.selectedSourceType.set(null);
+    this.sourceTypeForm.reset({ name: '' });
   }
 
   deleteSourceType(sourceType: SourceTypeDto): void {
@@ -148,31 +173,54 @@ export class AdminDictionariesPage {
       });
   }
 
-  createTestType(): void {
+  saveTestType(): void {
     if (this.testTypeForm.invalid) {
       this.testTypeForm.markAllAsTouched();
       return;
     }
 
+    const selectedTestType = this.selectedTestType();
+    const request =
+      selectedTestType?.id
+        ? this.adminApi.updateTestType(selectedTestType.id, this.testTypeUpdatePayload())
+        : this.adminApi.createTestType(this.testTypePayload());
+
     this.savingTestType.set(true);
     this.message.set(null);
 
-    this.adminApi
-      .createTestType(this.testTypePayload())
-      .pipe(finalize(() => this.savingTestType.set(false)))
-      .subscribe({
-        next: () => {
-          this.message.set(this.i18n.t('admin.dictionaries.testTypeCreated'));
-          this.testTypeForm.reset({
-            name: '',
-            referenceMin: null,
-            referenceMax: null,
-            unit: ''
-          });
-          this.refresh();
-        },
-        error: (error: unknown) => this.addError(this.i18n.t('admin.dictionaries.createTestType'), error)
-      });
+    request.pipe(finalize(() => this.savingTestType.set(false))).subscribe({
+      next: () => {
+        this.message.set(
+          selectedTestType
+            ? this.i18n.t('admin.dictionaries.testTypeUpdated')
+            : this.i18n.t('admin.dictionaries.testTypeCreated')
+        );
+        this.cancelTestTypeEdit();
+        this.refresh();
+      },
+      error: (error: unknown) => this.addError(this.i18n.t('admin.dictionaries.saveTestType'), error)
+    });
+  }
+
+  editTestType(testType: TestTypeDto): void {
+    this.selectedTestType.set(testType);
+    this.message.set(null);
+    this.testTypeForm.reset({
+      name: testType.name ?? '',
+      referenceMin: testType.referenceMin ?? null,
+      referenceMax: testType.referenceMax ?? null,
+      unit: testType.unit ?? ''
+    });
+  }
+
+  cancelTestTypeEdit(): void {
+    this.selectedTestType.set(null);
+    this.testTypeForm.reset({
+      name: '',
+      referenceMin: null,
+      referenceMax: null,
+      unit: ''
+    });
   }
 
   deleteTestType(testType: TestTypeDto): void {
@@ -225,6 +273,10 @@ export class AdminDictionariesPage {
     };
   }
 
+  private sourceTypeUpdatePayload(): SourceTypeUpdateDto {
+    return this.sourceTypePayload();
+  }
+
   private testTypePayload(): TestTypeCreateDto {
     const value = this.testTypeForm.getRawValue();
 
@@ -236,15 +288,15 @@ export class AdminDictionariesPage {
     };
   }
 
+  private testTypeUpdatePayload(): TestTypeUpdateDto {
+    return this.testTypePayload();
+  }
+
   private addError(label: string, error: unknown): void {
     this.errors.update((errors) => [...errors, `${label}: ${this.errorMessage(error)}`]);
   }
 
   private errorMessage(error: unknown): string {
-    if (error instanceof Error) {
-      return error.message;
-    }
-
-    return 'Request failed';
+    return readableApiError(error);
   }
 }

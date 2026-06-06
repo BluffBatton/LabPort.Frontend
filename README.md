@@ -59,7 +59,7 @@ npm run build
 - Sources list, create, edit, delete, and details.
 - Container thresholds and latest sensor reading.
 - Sensor readings list and create action.
-- Alerts list and details as read-only backend data.
+- Alerts list, details, mark-as-read, and delete actions.
 - Tests list, create, update status/comment/type, and details.
 - Test results list, create, and details.
 - Profile page showing useful user information only.
@@ -69,12 +69,11 @@ Technical IDs are kept only in TypeScript for routing, edit/delete actions, and 
 ## Admin Features
 
 - Protected admin layout with role guard.
-- Users table and users CSV export.
-- Test type create/delete through Admin endpoints.
-- Source type create/delete through Admin endpoints.
+- Users table, role update, delete, and users CSV export.
+- Test type create/edit/delete through Admin endpoints.
+- Source type create/edit/delete through Admin endpoints.
 - Admin statistics overview.
-- Data management page with users CSV export.
-- Disabled backup/import placeholders where backend endpoint support is missing.
+- Data management page with users CSV export and JSON settings backup/import.
 
 ## Localization
 
@@ -87,9 +86,7 @@ The selected language is stored in `localStorage`. Dates are formatted with `uk-
 
 ## Known Limitations
 
-- Full database backup/import is not supported by the backend yet, so those actions are visible but disabled.
-- Admin user deletion and role changes are not implemented because backend endpoints are not documented.
-- Alert mark-as-read/delete is disabled because the backend currently exposes read-only alert endpoints.
+- Full physical database backup/restore is not implemented; the frontend currently supports settings backup/import for source types and test types.
 - Lab orders and lab reports remain placeholders until matching backend endpoints exist.
-- Source type and test type update actions are not implemented because only create/delete endpoints are documented.
-- Test delete and test result update/delete are not implemented because those backend endpoints are missing.
+- Dedicated admin roles and audit-log pages remain placeholders until matching backend endpoints exist.
+- Sensor reading update/delete, test delete, and test result update/delete are not implemented because those backend endpoints are missing.

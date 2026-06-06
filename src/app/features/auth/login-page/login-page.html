@@ -34,7 +34,7 @@
 
         @if (message() || !loginAvailable) {
           <div class="todo-block">
-            <strong>{{ i18n.t('common.todo') }}</strong>
+            <strong>{{ i18n.t('auth.login.backendReady') }}</strong>
             <p>{{ message() ?? i18n.t('auth.login.disabled') }}</p>
             @if (returnUrl) {
               <small>{{ i18n.t('auth.login.returnHint') }} {{ returnUrl }}</small>

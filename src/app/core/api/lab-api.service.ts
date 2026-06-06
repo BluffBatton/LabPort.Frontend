@@ -139,4 +139,12 @@ export class LabApiService {
   getAlertById(id: string): Observable<AlertDto> {
     return this.http.get<AlertDto>(this.api.endpointUrl('alert', 'byId', { Id: id }));
   }
+
+  markAlertAsRead(id: string): Observable<void> {
+    return this.http.patch<void>(this.api.endpointUrl('alert', 'markAsRead', { id }), {});
+  }
+
+  deleteAlert(id: string): Observable<void> {
+    return this.http.delete<void>(this.api.endpointUrl('alert', 'delete', { id }));
+  }
 }

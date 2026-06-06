@@ -55,7 +55,25 @@
                   >
                     {{ i18n.t('alerts.details') }}
                   </button>
-                  <button mat-stroked-button type="button" disabled>{{ i18n.t('alerts.markRead') }}</button>
+                  @if (!alert.isRead) {
+                    <button
+                      mat-stroked-button
+                      type="button"
+                      (click)="markAsRead(alert)"
+                      [disabled]="markingReadId() === alert.id || deletingAlertId() === alert.id"
+                    >
+                      {{ i18n.t('alerts.markRead') }}
+                    </button>
+                  }
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    color="warn"
+                    (click)="deleteAlert(alert)"
+                    [disabled]="deletingAlertId() === alert.id"
+                  >
+                    {{ i18n.t('alerts.delete') }}
+                  </button>
                 </div>
               </td>
             </ng-container>
@@ -95,13 +113,15 @@
           <p class="empty-state">{{ i18n.t('alerts.noSelection') }}</p>
         }
 
-        <div class="context-panel">
-          <strong>{{ i18n.t('common.todo') }}</strong>
-          <span>{{ i18n.t('alerts.mutationTodo') }}</span>
-        </div>
       </mat-card-content>
     </mat-card>
   </div>
+
+  @if (message()) {
+    <mat-card appearance="outlined" class="success-card">
+      <mat-card-content>{{ message() }}</mat-card-content>
+    </mat-card>
+  }
 
   @if (endpointErrors().length) {
     <mat-card appearance="outlined" class="error-card">
@@ -109,7 +129,7 @@
         <mat-card-title>{{ i18n.t('alerts.endpointErrors') }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <mat-chip-set aria-label="Alert endpoint errors">
+        <mat-chip-set aria-label="Alert service errors">
           @for (error of endpointErrors(); track error) {
             <mat-chip>{{ error }}</mat-chip>
           }

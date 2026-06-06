@@ -34,8 +34,8 @@
             <button mat-stroked-button type="button" (click)="resetExportRange()">
               {{ i18n.t('admin.users.reset') }}
             </button>
-            <button mat-flat-button type="submit" [disabled]="exporting()">
-              {{ exporting() ? i18n.t('dataManagement.exporting') : i18n.t('dataManagement.exportUsers') }}
+            <button mat-flat-button type="submit" [disabled]="exportingUsers()">
+              {{ exportingUsers() ? i18n.t('dataManagement.exporting') : i18n.t('dataManagement.exportUsers') }}
             </button>
           </div>
         </form>
@@ -45,26 +45,71 @@
     <mat-card appearance="outlined" class="management-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('dataManagement.backupTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('placeholder.endpointMissing') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendExport') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
         <p>{{ i18n.t('dataManagement.backupText') }}</p>
-        <!-- TODO: Enable full database backup when the backend exposes a documented endpoint. -->
-        <button mat-stroked-button type="button" disabled>{{ i18n.t('dataManagement.backupAction') }}</button>
+        <button mat-flat-button type="button" (click)="exportSettingsBackup()" [disabled]="exportingSettings()">
+          {{ exportingSettings() ? i18n.t('dataManagement.exporting') : i18n.t('dataManagement.exportSettings') }}
+        </button>
       </mat-card-content>
     </mat-card>
 
     <mat-card appearance="outlined" class="management-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('dataManagement.importTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('placeholder.endpointMissing') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ i18n.t('common.backendAction') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
         <p>{{ i18n.t('dataManagement.importText') }}</p>
-        <!-- TODO: Enable database import when the backend exposes a documented endpoint. -->
-        <button mat-stroked-button type="button" disabled>{{ i18n.t('dataManagement.importAction') }}</button>
+        <label class="file-picker">
+          <span>{{ i18n.t('dataManagement.selectFile') }}</span>
+          <input type="file" accept="application/json,.json" (change)="onSettingsFileSelected($event)" />
+        </label>
+
+        @if (selectedFileName()) {
+          <p class="file-name">{{ selectedFileName() }}</p>
+        }
+
+        @if (selectedBackup()) {
+          <div class="preview-grid">
+            <div>
+              <span>{{ i18n.t('dataManagement.sourceTypes') }}</span>
+              <strong>{{ sourceTypePreviewCount() }}</strong>
+            </div>
+            <div>
+              <span>{{ i18n.t('dataManagement.testTypes') }}</span>
+              <strong>{{ testTypePreviewCount() }}</strong>
+            </div>
+          </div>
+        }
+
+        <button mat-flat-button type="button" (click)="importSettingsBackup()" [disabled]="!selectedBackup() || importingSettings()">
+          {{ importingSettings() ? i18n.t('dataManagement.importing') : i18n.t('dataManagement.importSettings') }}
+        </button>
+
+        @if (importResult()) {
+          <div class="preview-grid">
+            <div>
+              <span>{{ i18n.t('dataManagement.createdSourceTypes') }}</span>
+              <strong>{{ importResult()?.createdSourceTypes ?? 0 }}</strong>
+            </div>
+            <div>
+              <span>{{ i18n.t('dataManagement.skippedSourceTypes') }}</span>
+              <strong>{{ importResult()?.skippedSourceTypes ?? 0 }}</strong>
+            </div>
+            <div>
+              <span>{{ i18n.t('dataManagement.createdTestTypes') }}</span>
+              <strong>{{ importResult()?.createdTestTypes ?? 0 }}</strong>
+            </div>
+            <div>
+              <span>{{ i18n.t('dataManagement.skippedTestTypes') }}</span>
+              <strong>{{ importResult()?.skippedTestTypes ?? 0 }}</strong>
+            </div>
+          </div>
+        }
       </mat-card-content>
     </mat-card>
   </div>
@@ -81,7 +126,7 @@
         <mat-card-title>{{ i18n.t('dataManagement.endpointErrors') }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <mat-chip-set aria-label="Data management endpoint errors">
+        <mat-chip-set aria-label="Data management service errors">
           @for (error of endpointErrors(); track error) {
             <mat-chip>{{ error }}</mat-chip>
           }

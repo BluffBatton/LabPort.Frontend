@@ -26,15 +26,26 @@
       </mat-card-header>
 
       <mat-card-content>
-        <form [formGroup]="sourceTypeForm" (ngSubmit)="createSourceType()" class="inline-form">
+        <form [formGroup]="sourceTypeForm" (ngSubmit)="saveSourceType()" class="inline-form">
           <mat-form-field appearance="outline">
             <mat-label>{{ i18n.t('admin.dictionaries.name') }}</mat-label>
             <input matInput formControlName="name" />
           </mat-form-field>
 
           <button mat-flat-button type="submit" [disabled]="savingSourceType() || sourceTypeForm.invalid">
-            {{ savingSourceType() ? i18n.t('admin.dictionaries.saving') : i18n.t('admin.dictionaries.createSourceType') }}
+            {{
+              savingSourceType()
+                ? i18n.t('admin.dictionaries.saving')
+                : selectedSourceType()
+                  ? i18n.t('admin.dictionaries.updateSourceType')
+                  : i18n.t('admin.dictionaries.createSourceType')
+            }}
           </button>
+          @if (selectedSourceType()) {
+            <button mat-stroked-button type="button" (click)="cancelSourceTypeEdit()">
+              {{ i18n.t('admin.dictionaries.cancelEdit') }}
+            </button>
+          }
         </form>
 
         @if (sourceTypes().length) {
@@ -47,6 +58,9 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>{{ i18n.t('admin.dictionaries.actions') }}</th>
               <td mat-cell *matCellDef="let sourceType">
+                <button mat-stroked-button type="button" (click)="editSourceType(sourceType)">
+                  {{ i18n.t('admin.dictionaries.edit') }}
+                </button>
                 <button
                   mat-stroked-button
                   type="button"
@@ -64,11 +78,6 @@
         } @else {
           <p class="empty-state">{{ i18n.t('admin.dictionaries.emptySourceTypes') }}</p>
         }
-
-        <div class="context-panel">
-          <strong>{{ i18n.t('common.todo') }}</strong>
-          <span>{{ i18n.t('admin.dictionaries.sourceTypeUpdateTodo') }}</span>
-        </div>
       </mat-card-content>
     </mat-card>
 
@@ -79,7 +88,7 @@
       </mat-card-header>
 
       <mat-card-content>
-        <form [formGroup]="testTypeForm" (ngSubmit)="createTestType()" class="test-type-form">
+        <form [formGroup]="testTypeForm" (ngSubmit)="saveTestType()" class="test-type-form">
           <mat-form-field appearance="outline">
             <mat-label>{{ i18n.t('admin.dictionaries.name') }}</mat-label>
             <input matInput formControlName="name" />
@@ -102,8 +111,19 @@
 
           <div class="form-actions">
             <button mat-flat-button type="submit" [disabled]="savingTestType() || testTypeForm.invalid">
-              {{ savingTestType() ? i18n.t('admin.dictionaries.saving') : i18n.t('admin.dictionaries.createTestType') }}
+              {{
+                savingTestType()
+                  ? i18n.t('admin.dictionaries.saving')
+                  : selectedTestType()
+                    ? i18n.t('admin.dictionaries.updateTestType')
+                    : i18n.t('admin.dictionaries.createTestType')
+              }}
             </button>
+            @if (selectedTestType()) {
+              <button mat-stroked-button type="button" (click)="cancelTestTypeEdit()">
+                {{ i18n.t('admin.dictionaries.cancelEdit') }}
+              </button>
+            }
           </div>
         </form>
 
@@ -127,6 +147,9 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>{{ i18n.t('admin.dictionaries.actions') }}</th>
               <td mat-cell *matCellDef="let testType">
+                <button mat-stroked-button type="button" (click)="editTestType(testType)">
+                  {{ i18n.t('admin.dictionaries.edit') }}
+                </button>
                 <button
                   mat-stroked-button
                   type="button"
@@ -144,11 +167,6 @@
         } @else {
           <p class="empty-state">{{ i18n.t('admin.dictionaries.emptyTestTypes') }}</p>
         }
-
-        <div class="context-panel">
-          <strong>{{ i18n.t('common.todo') }}</strong>
-          <span>{{ i18n.t('admin.dictionaries.testTypeUpdateTodo') }}</span>
-        </div>
       </mat-card-content>
     </mat-card>
   </div>
@@ -165,7 +183,7 @@
         <mat-card-title>{{ i18n.t('admin.dictionaries.endpointErrors') }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <mat-chip-set aria-label="Dictionary endpoint errors">
+        <mat-chip-set aria-label="Dictionary service errors">
           @for (error of endpointErrors(); track error) {
             <mat-chip>{{ error }}</mat-chip>
           }

@@ -45,7 +45,19 @@
 
             <ng-container matColumnDef="role">
               <th mat-header-cell *matHeaderCellDef>{{ i18n.t('admin.users.role') }}</th>
-              <td mat-cell *matCellDef="let user">{{ user.role || '-' }}</td>
+              <td mat-cell *matCellDef="let user">
+                <mat-form-field class="role-field" appearance="outline" subscriptSizing="dynamic">
+                  <mat-select
+                    [value]="roleValue(user.role)"
+                    (selectionChange)="updateRole(user, $event.value)"
+                    [disabled]="updatingRoleId() === user.id || deletingUserId() === user.id"
+                  >
+                    @for (role of roleOptions; track role) {
+                      <mat-option [value]="role">{{ roleLabel(role) }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </td>
             </ng-container>
 
             <ng-container matColumnDef="createdAt">
@@ -61,7 +73,15 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>{{ i18n.t('admin.users.actions') }}</th>
               <td mat-cell *matCellDef="let user">
-                <button mat-stroked-button type="button" disabled>{{ i18n.t('admin.users.manageRole') }}</button>
+                <button
+                  mat-stroked-button
+                  type="button"
+                  color="warn"
+                  (click)="deleteUser(user)"
+                  [disabled]="deletingUserId() === user.id"
+                >
+                  {{ i18n.t('admin.users.deleteUser') }}
+                </button>
               </td>
             </ng-container>
 
@@ -97,11 +117,6 @@
             <span>{{ i18n.t('admin.users.exportScopeText') }}</span>
           </div>
 
-          <div class="context-panel">
-            <strong>{{ i18n.t('common.todo') }}</strong>
-            <span>{{ i18n.t('admin.users.roleTodo') }}</span>
-          </div>
-
           <div class="form-actions">
             <button mat-stroked-button type="button" (click)="resetReportRange()">
               {{ i18n.t('admin.users.reset') }}
@@ -127,7 +142,7 @@
         <mat-card-title>{{ i18n.t('admin.users.endpointErrors') }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <mat-chip-set aria-label="Admin users endpoint errors">
+        <mat-chip-set aria-label="Admin users service errors">
           @for (error of endpointErrors(); track error) {
             <mat-chip>{{ error }}</mat-chip>
           }

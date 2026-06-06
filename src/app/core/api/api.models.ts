@@ -1,4 +1,5 @@
-export type Role = 'user' | 'admin';
+export type Role = 'user' | 'admin' | 'User' | 'Admin';
+export type BackendRole = 'User' | 'Admin';
 
 export interface UserInfoDto {
   readonly id?: string;
@@ -22,6 +23,10 @@ export interface UserUpdateDto {
   readonly lastName?: string | null;
   readonly email?: string | null;
   readonly phoneNumber?: string | null;
+}
+
+export interface UserRoleUpdateDto {
+  readonly role: BackendRole;
 }
 
 export interface UserPasswordUpdateDto {
@@ -193,6 +198,10 @@ export interface SourceTypeCreateDto {
   readonly name?: string | null;
 }
 
+export interface SourceTypeUpdateDto {
+  readonly name?: string | null;
+}
+
 export interface TestDto {
   readonly id?: string;
   readonly testedAt?: string;
@@ -234,6 +243,37 @@ export interface TestTypeCreateDto {
   readonly referenceMin?: number | null;
   readonly referenceMax?: number | null;
   readonly unit?: string | null;
+}
+
+export interface TestTypeUpdateDto {
+  readonly name?: string | null;
+  readonly referenceMin?: number | null;
+  readonly referenceMax?: number | null;
+  readonly unit?: string | null;
+}
+
+export interface SettingsBackupSourceTypeDto {
+  readonly name?: string | null;
+}
+
+export interface SettingsBackupTestTypeDto {
+  readonly name?: string | null;
+  readonly referenceMin?: number | null;
+  readonly referenceMax?: number | null;
+  readonly unit?: string | null;
+}
+
+export interface SettingsBackupDto {
+  readonly exportedAt?: string;
+  readonly sourceTypes?: readonly SettingsBackupSourceTypeDto[];
+  readonly testTypes?: readonly SettingsBackupTestTypeDto[];
+}
+
+export interface SettingsBackupImportResultDto {
+  readonly createdSourceTypes?: number;
+  readonly skippedSourceTypes?: number;
+  readonly createdTestTypes?: number;
+  readonly skippedTestTypes?: number;
 }
 
 export interface TestResultDto {

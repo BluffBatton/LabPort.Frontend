@@ -44,11 +44,11 @@ export class PlaceholderPage {
     const data = this.data();
 
     if (!data.endpointArea || !data.endpointName) {
-      return this.i18n.t('placeholder.endpointMissing');
+      return this.i18n.t('placeholder.nextStep');
     }
 
     if (this.api.isAvailable(data.endpointArea, data.endpointName)) {
-      return this.api.endpointLabel(data.endpointArea, data.endpointName);
+      return this.i18n.t('placeholder.endpointAvailable');
     }
 
     return this.api.unavailableMessage(data.endpointArea, data.endpointName);
@@ -58,7 +58,7 @@ export class PlaceholderPage {
     const data = this.data();
 
     if (data.endpointArea && data.endpointName && this.api.isAvailable(data.endpointArea, data.endpointName)) {
-      return this.i18n.t('placeholder.endpointAvailable');
+      return this.i18n.t('placeholder.implementationPending');
     }
 
     return this.i18n.t('placeholder.endpointMissing');

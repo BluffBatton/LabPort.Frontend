@@ -8,6 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { finalize } from 'rxjs';
 
 import { AlertDto } from '../../../core/api/api.models';
+import { readableApiError } from '../../../core/api/api-error';
 import { LabApiService } from '../../../core/api/lab-api.service';
 import { LabportApiService } from '../../../core/api/labport-api.service';
 import { LocalizationService } from '../../../core/localization/localization.service';
@@ -26,7 +27,10 @@ export class AlertsPage {
   readonly selectedAlert = signal<AlertDto | null>(null);
   readonly loading = signal(false);
   readonly loadingDetailsId = signal<string | null>(null);
+  readonly markingReadId = signal<string | null>(null);
+  readonly deletingAlertId = signal<string | null>(null);
   readonly errors = signal<string[]>([]);
+  readonly message = signal<string | null>(null);
 
   private readonly labApi = inject(LabApiService);
 
@@ -67,6 +71,64 @@ export class AlertsPage {
       });
   }
 
+  markAsRead(alert: AlertDto): void {
+    if (!alert.id) {
+      this.addError(this.i18n.t('alerts.markRead'), new Error('Alert reference is missing.'));
+      return;
+    }
+
+    this.markingReadId.set(alert.id);
+    this.message.set(null);
+
+    this.labApi
+      .markAlertAsRead(alert.id)
+      .pipe(finalize(() => this.markingReadId.set(null)))
+      .subscribe({
+        next: () => {
+          this.message.set(this.i18n.t('alerts.markedRead'));
+          if (this.selectedAlert()?.id === alert.id) {
+            this.selectedAlert.set({
+              ...this.selectedAlert()!,
+              isRead: true,
+              readAt: new Date().toISOString()
+            });
+          }
+          this.refresh();
+        },
+        error: (error: unknown) => this.addError(this.i18n.t('alerts.markRead'), error)
+      });
+  }
+
+  deleteAlert(alert: AlertDto): void {
+    if (!alert.id) {
+      this.addError(this.i18n.t('alerts.delete'), new Error('Alert reference is missing.'));
+      return;
+    }
+
+    const label = alert.message || this.i18n.t('alerts.detailsTitle');
+
+    if (!globalThis.confirm(this.i18n.t('alerts.deleteConfirm').replace('{message}', label))) {
+      return;
+    }
+
+    this.deletingAlertId.set(alert.id);
+    this.message.set(null);
+
+    this.labApi
+      .deleteAlert(alert.id)
+      .pipe(finalize(() => this.deletingAlertId.set(null)))
+      .subscribe({
+        next: () => {
+          this.message.set(this.i18n.t('alerts.deleted'));
+          if (this.selectedAlert()?.id === alert.id) {
+            this.selectedAlert.set(null);
+          }
+          this.refresh();
+        },
+        error: (error: unknown) => this.addError(this.i18n.t('alerts.delete'), error)
+      });
+  }
+
   statusLabel(alert: AlertDto): string {
     return alert.isRead ? this.i18n.t('alerts.status.read') : this.i18n.t('alerts.status.unread');
   }
@@ -80,10 +142,6 @@ export class AlertsPage {
   }
 
   private errorMessage(error: unknown): string {
-    if (error instanceof Error) {
-      return error.message;
-    }
-
-    return 'Request failed';
+    return readableApiError(error);
   }
 }

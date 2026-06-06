@@ -62,6 +62,40 @@
   gap: 10px;
 }
 
+.file-picker {
+  display: grid;
+  gap: 8px;
+  color: #2563eb;
+  font-weight: 650;
+}
+
+.file-name {
+  padding: 10px 12px;
+  border: 1px solid #dbe3ef;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+
+  div {
+    display: grid;
+    gap: 4px;
+    padding: 12px;
+    border: 1px solid #dbe3ef;
+    border-radius: 8px;
+    background: #f8fafc;
+  }
+
+  span {
+    color: #64748b;
+    font-size: 12px;
+  }
+}
+
 .success-card {
   border-color: #bfdbfe;
   background: #eff6ff;
