@@ -11,6 +11,7 @@
   --lp-accent-strong: #115e59;
   --lp-warning: #8a5a00;
   --lp-admin: #314b7c;
+  --lp-font: 'Segoe UI', Roboto, Arial, sans-serif;
   color-scheme: light;
 }
 
@@ -23,11 +24,27 @@ body {
   margin: 0;
   background: var(--lp-bg);
   color: var(--lp-text);
-  font-family: Roboto, Arial, sans-serif;
+  font-family: var(--lp-font);
 }
 
 * {
   box-sizing: border-box;
+}
+
+button,
+input,
+textarea,
+select,
+.mat-mdc-button-base,
+.mat-mdc-card,
+.mat-mdc-table,
+.mat-mdc-form-field,
+.mat-mdc-select,
+.mat-mdc-option,
+.mat-mdc-list-item,
+.mat-mdc-chip,
+.mat-mdc-menu-item {
+  font-family: var(--lp-font);
 }
 
 a {
