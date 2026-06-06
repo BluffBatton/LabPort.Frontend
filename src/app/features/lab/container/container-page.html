@@ -6,9 +6,14 @@
       <p>{{ i18n.t('pages.container.description') }}</p>
     </div>
 
-    <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
-      {{ i18n.t('container.refresh') }}
-    </button>
+    <div class="page-actions">
+      <button mat-flat-button type="button" (click)="toggleLid()" [disabled]="loading() || togglingLid()">
+        {{ togglingLid() ? i18n.t('container.togglingLid') : i18n.t('container.toggleLid') }}
+      </button>
+      <button mat-stroked-button type="button" (click)="refresh()" [disabled]="loading() || togglingLid()">
+        {{ i18n.t('container.refresh') }}
+      </button>
+    </div>
   </header>
 
   @if (loading()) {

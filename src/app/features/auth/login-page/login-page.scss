@@ -36,10 +36,7 @@
 }
 
 .login-copy p,
-.todo-block p,
-.endpoint-block p,
-.endpoint-block small,
-.todo-block small {
+.todo-block p {
   margin: 0;
   color: var(--lp-text-muted);
   line-height: 1.6;
@@ -51,7 +48,6 @@ mat-card {
 
 mat-card-content,
 form,
-.endpoint-block,
 .todo-block {
   display: grid;
   gap: 16px;
@@ -70,17 +66,6 @@ form {
 
 .todo-block strong {
   color: var(--lp-warning);
-}
-
-.endpoint-block {
-  padding: 14px;
-  border: 1px solid #b9d7d2;
-  border-radius: 8px;
-  background: #effaf7;
-}
-
-.endpoint-block strong {
-  color: var(--lp-accent-strong);
 }
 
 .locale-field {

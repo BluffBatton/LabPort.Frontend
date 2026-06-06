@@ -40,6 +40,8 @@ export interface ReadingPointDto {
   readonly humidity?: number;
 }
 
+export type ReadingStatsRange = 'hour' | 'day' | 'last7days';
+
 export type LidPosition = 'open' | 'closed';
 
 export interface SensorReadingDto {

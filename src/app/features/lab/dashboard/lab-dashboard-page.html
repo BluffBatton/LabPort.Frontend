@@ -6,9 +6,20 @@
       <p>{{ i18n.t('pages.labDashboard.description') }}</p>
     </div>
 
-    <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
-      {{ i18n.t('lab.dashboard.refresh') }}
-    </button>
+    <div class="dashboard__actions">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ i18n.t('lab.dashboard.range') }}</mat-label>
+        <mat-select [value]="range()" (selectionChange)="setRange($event.value)">
+          @for (option of ranges; track option) {
+            <mat-option [value]="option">{{ rangeLabel(option) }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
+        {{ i18n.t('lab.dashboard.refresh') }}
+      </button>
+    </div>
   </header>
 
   @if (loading()) {

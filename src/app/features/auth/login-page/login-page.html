@@ -3,13 +3,11 @@
     <div class="login-copy">
       <span>{{ i18n.t('common.appName') }}</span>
       <h1>{{ i18n.t('auth.login.title') }}</h1>
-      <p>{{ i18n.t('auth.login.subtitle') }}</p>
     </div>
 
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('auth.login.title') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendAuth') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -34,19 +32,7 @@
 
         @if (message() || !loginAvailable) {
           <div class="todo-block">
-            <strong>{{ i18n.t('auth.login.backendReady') }}</strong>
             <p>{{ message() ?? i18n.t('auth.login.disabled') }}</p>
-            @if (returnUrl) {
-              <small>{{ i18n.t('auth.login.returnHint') }} {{ returnUrl }}</small>
-            }
-          </div>
-        } @else {
-          <div class="endpoint-block">
-            <strong>{{ i18n.t('common.appName') }}</strong>
-            <p>{{ i18n.t('auth.login.endpointReady') }}</p>
-            @if (returnUrl) {
-              <small>{{ i18n.t('auth.login.returnHint') }} {{ returnUrl }}</small>
-            }
           </div>
         }
 

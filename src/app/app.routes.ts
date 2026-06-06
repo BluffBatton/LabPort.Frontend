@@ -13,8 +13,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login-page/login-page').then((m) => m.LoginPage)
   },
   {
+    path: 'login',
+    redirectTo: 'auth/login'
+  },
+  {
     path: 'auth/register',
     loadComponent: () => import('./features/auth/register-page/register-page').then((m) => m.RegisterPage)
+  },
+  {
+    path: 'register',
+    redirectTo: 'auth/register'
   },
   {
     path: 'lab',
@@ -118,8 +126,23 @@ export const routes: Routes = [
         }
       },
       {
+        path: 'source-types',
+        loadComponent: () => import('./features/admin/dictionaries/admin-dictionaries-page').then((m) => m.AdminDictionariesPage),
+        data: {
+          dictionaryKind: 'source'
+        }
+      },
+      {
+        path: 'test-types',
+        loadComponent: () => import('./features/admin/dictionaries/admin-dictionaries-page').then((m) => m.AdminDictionariesPage),
+        data: {
+          dictionaryKind: 'test'
+        }
+      },
+      {
         path: 'dictionaries',
-        loadComponent: () => import('./features/admin/dictionaries/admin-dictionaries-page').then((m) => m.AdminDictionariesPage)
+        pathMatch: 'full',
+        redirectTo: 'source-types'
       },
       {
         path: 'data-management',

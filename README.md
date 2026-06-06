@@ -36,7 +36,7 @@ export const environment = {
 };
 ```
 
-The frontend appends documented paths such as `/api/Auth/Login`, `/api/Sample/GetAllSamples`, and `/api/SensorReading/GetAllSensorReadings/1`.
+The frontend appends documented paths such as `/api/Auth/Login`, `/api/Sample/GetAllSamples`, `/api/SensorReading/GetAllSensorReadings/1`, and `/api/Sensor/ToggleLid`.
 
 ## Run Locally
 
@@ -54,10 +54,10 @@ npm run build
 
 ## Lab Assistant Features
 
-- JWT login and protected lab routes.
+- JWT login and protected lab routes, with `/login` and `/auth/login` entry points.
 - Samples list, create, edit, delete, and details.
 - Sources list, create, edit, delete, and details.
-- Container thresholds and latest sensor reading.
+- Container thresholds, latest sensor reading, IoT lid toggle, and dashboard reading range selector.
 - Sensor readings list and create action.
 - Alerts list, details, mark-as-read, and delete actions.
 - Tests list, create, update status/comment/type, and details.
@@ -70,8 +70,8 @@ Technical IDs are kept only in TypeScript for routing, edit/delete actions, and 
 
 - Protected admin layout with role guard.
 - Users table, role update, delete, and users CSV export.
-- Test type create/edit/delete through Admin endpoints.
-- Source type create/edit/delete through Admin endpoints.
+- Test type create/edit/delete through Admin endpoints at `/admin/test-types`.
+- Source type create/edit/delete through Admin endpoints at `/admin/source-types`.
 - Admin statistics overview.
 - Data management page with users CSV export and JSON settings backup/import.
 

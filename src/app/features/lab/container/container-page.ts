@@ -36,6 +36,7 @@ export class ContainerPage {
   readonly latestReading = signal<SensorReadingDto | null>(null);
   readonly loading = signal(false);
   readonly saving = signal(false);
+  readonly togglingLid = signal(false);
   readonly errors = signal<string[]>([]);
   readonly message = signal<string | null>(null);
 
@@ -112,6 +113,22 @@ export class ContainerPage {
           this.refresh();
         },
         error: (error: unknown) => this.addError(this.i18n.t('container.save'), error)
+      });
+  }
+
+  toggleLid(): void {
+    this.togglingLid.set(true);
+    this.message.set(null);
+
+    this.labApi
+      .toggleLid()
+      .pipe(finalize(() => this.togglingLid.set(false)))
+      .subscribe({
+        next: () => {
+          this.message.set(this.i18n.t('container.lidToggled'));
+          this.refresh();
+        },
+        error: (error: unknown) => this.addError(this.i18n.t('container.toggleLid'), error)
       });
   }
 

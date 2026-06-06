@@ -16,6 +16,13 @@
   gap: 8px;
 }
 
+.page-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .page-heading span {
   color: var(--lp-accent-strong);
   font-size: 12px;
@@ -111,5 +118,9 @@ form {
   .content-grid {
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .page-actions {
+    justify-content: flex-start;
   }
 }

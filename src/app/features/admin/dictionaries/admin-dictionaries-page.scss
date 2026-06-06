@@ -53,6 +53,10 @@
   align-items: start;
 }
 
+.content-grid--single {
+  grid-template-columns: minmax(360px, 720px);
+}
+
 mat-card {
   border-color: var(--lp-border);
 }

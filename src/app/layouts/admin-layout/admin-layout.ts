@@ -50,7 +50,8 @@ export class AdminLayout {
     { path: '/admin/dashboard', labelKey: 'nav.admin.dashboard', captionKey: 'nav.admin.dashboard.caption' },
     { path: '/admin/users', labelKey: 'nav.admin.users', captionKey: 'nav.admin.users.caption' },
     { path: '/admin/roles', labelKey: 'nav.admin.roles', captionKey: 'nav.admin.roles.caption' },
-    { path: '/admin/dictionaries', labelKey: 'nav.admin.dictionaries', captionKey: 'nav.admin.dictionaries.caption' },
+    { path: '/admin/source-types', labelKey: 'nav.admin.sourceTypes', captionKey: 'nav.admin.sourceTypes.caption' },
+    { path: '/admin/test-types', labelKey: 'nav.admin.testTypes', captionKey: 'nav.admin.testTypes.caption' },
     { path: '/admin/data-management', labelKey: 'nav.admin.dataManagement', captionKey: 'nav.admin.dataManagement.caption' },
     { path: '/admin/audit', labelKey: 'nav.admin.audit', captionKey: 'nav.admin.audit.caption' },
     { path: '/admin/profile', labelKey: 'nav.admin.profile', captionKey: 'nav.admin.profile.caption' }

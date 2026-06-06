@@ -7,6 +7,7 @@ import {
   ContainerReadingStatsDto,
   ContainerUpdateDto,
   AlertDto,
+  ReadingStatsRange,
   SensorReadingCreateDto,
   SensorReadingDto,
   SampleCreateDto,
@@ -32,8 +33,8 @@ export class LabApiService {
   private readonly api = inject(LabportApiService);
   private readonly http = inject(HttpClient);
 
-  getContainerReadingStats(): Observable<ContainerReadingStatsDto> {
-    return this.http.get<ContainerReadingStatsDto>(this.api.endpointUrl('statistics', 'containerReadings'));
+  getContainerReadingStats(range: ReadingStatsRange = 'last7days'): Observable<ContainerReadingStatsDto> {
+    return this.http.get<ContainerReadingStatsDto>(this.api.endpointUrl('statistics', 'containerReadings', {}, { range }));
   }
 
   getContainer(): Observable<ContainerDto> {
@@ -130,6 +131,10 @@ export class LabApiService {
 
   createSensorReading(sensorReading: SensorReadingCreateDto): Observable<void> {
     return this.http.post<void>(this.api.endpointUrl('sensorReading', 'create'), sensorReading);
+  }
+
+  toggleLid(): Observable<void> {
+    return this.http.post<void>(this.api.endpointUrl('sensor', 'toggleLid'), null);
   }
 
   getAlerts(): Observable<AlertDto[]> {

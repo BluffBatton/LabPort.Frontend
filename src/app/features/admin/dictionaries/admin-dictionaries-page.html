@@ -2,8 +2,8 @@
   <header class="page-heading">
     <div>
       <span>{{ i18n.t('common.admin') }}</span>
-      <h2>{{ i18n.t('pages.dictionaries.title') }}</h2>
-      <p>{{ i18n.t('pages.dictionaries.description') }}</p>
+      <h2>{{ pageTitle() }}</h2>
+      <p>{{ pageDescription() }}</p>
     </div>
 
     <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
@@ -18,7 +18,8 @@
     </div>
   }
 
-  <div class="content-grid">
+  <div class="content-grid" [class.content-grid--single]="singleColumn()">
+    @if (showSourceTypes()) {
     <mat-card appearance="outlined" class="dictionary-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.dictionaries.sourceTypes') }}</mat-card-title>
@@ -80,7 +81,9 @@
         }
       </mat-card-content>
     </mat-card>
+    }
 
+    @if (showTestTypes()) {
     <mat-card appearance="outlined" class="dictionary-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.dictionaries.testTypes') }}</mat-card-title>
@@ -169,6 +172,7 @@
         }
       </mat-card-content>
     </mat-card>
+    }
   </div>
 
   @if (message()) {

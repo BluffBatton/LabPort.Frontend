@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 
 import {
@@ -21,6 +22,9 @@ import { AdminApiService } from '../../../core/api/admin-api.service';
 import { readableApiError } from '../../../core/api/api-error';
 import { LabportApiService } from '../../../core/api/labport-api.service';
 import { LocalizationService } from '../../../core/localization/localization.service';
+import { TranslationKey } from '../../../core/localization/translations';
+
+type DictionaryKind = 'source' | 'test' | 'both';
 
 @Component({
   selector: 'app-admin-dictionaries-page',
@@ -40,6 +44,8 @@ import { LocalizationService } from '../../../core/localization/localization.ser
 export class AdminDictionariesPage {
   readonly i18n = inject(LocalizationService);
   readonly api = inject(LabportApiService);
+  private readonly route = inject(ActivatedRoute);
+  readonly kind = this.dictionaryKind();
   readonly sourceTypeColumns = ['name', 'actions'];
   readonly testTypeColumns = ['name', 'range', 'unit', 'actions'];
   readonly sourceTypes = signal<SourceTypeDto[]>([]);
@@ -84,18 +90,22 @@ export class AdminDictionariesPage {
     this.errors.set([]);
 
     forkJoin({
-      sourceTypes: this.adminApi.getSourceTypes().pipe(
-        catchError((error: unknown) => {
-          this.addError(this.i18n.t('admin.dictionaries.sourceTypes'), error);
-          return of([] as SourceTypeDto[]);
-        })
-      ),
-      testTypes: this.adminApi.getTestTypes().pipe(
-        catchError((error: unknown) => {
-          this.addError(this.i18n.t('admin.dictionaries.testTypes'), error);
-          return of([] as TestTypeDto[]);
-        })
-      )
+      sourceTypes: this.showSourceTypes()
+        ? this.adminApi.getSourceTypes().pipe(
+            catchError((error: unknown) => {
+              this.addError(this.i18n.t('admin.dictionaries.sourceTypes'), error);
+              return of([] as SourceTypeDto[]);
+            })
+          )
+        : of([] as SourceTypeDto[]),
+      testTypes: this.showTestTypes()
+        ? this.adminApi.getTestTypes().pipe(
+            catchError((error: unknown) => {
+              this.addError(this.i18n.t('admin.dictionaries.testTypes'), error);
+              return of([] as TestTypeDto[]);
+            })
+          )
+        : of([] as TestTypeDto[])
     })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe(({ sourceTypes, testTypes }) => {
@@ -263,6 +273,55 @@ export class AdminDictionariesPage {
 
   endpointErrors(): readonly string[] {
     return this.errors();
+  }
+
+  pageTitle(): string {
+    return this.i18n.t(this.pageTitleKey());
+  }
+
+  pageDescription(): string {
+    return this.i18n.t(this.pageDescriptionKey());
+  }
+
+  showSourceTypes(): boolean {
+    return this.kind !== 'test';
+  }
+
+  showTestTypes(): boolean {
+    return this.kind !== 'source';
+  }
+
+  singleColumn(): boolean {
+    return this.showSourceTypes() !== this.showTestTypes();
+  }
+
+  private pageTitleKey(): TranslationKey {
+    if (this.kind === 'source') {
+      return 'pages.sourceTypes.title';
+    }
+
+    if (this.kind === 'test') {
+      return 'pages.testTypes.title';
+    }
+
+    return 'pages.dictionaries.title';
+  }
+
+  private pageDescriptionKey(): TranslationKey {
+    if (this.kind === 'source') {
+      return 'pages.sourceTypes.description';
+    }
+
+    if (this.kind === 'test') {
+      return 'pages.testTypes.description';
+    }
+
+    return 'pages.dictionaries.description';
+  }
+
+  private dictionaryKind(): DictionaryKind {
+    const kind = this.route.snapshot.data['dictionaryKind'];
+    return kind === 'source' || kind === 'test' || kind === 'both' ? kind : 'both';
   }
 
   private sourceTypePayload(): SourceTypeCreateDto {

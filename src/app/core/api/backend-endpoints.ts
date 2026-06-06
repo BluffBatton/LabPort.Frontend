@@ -290,6 +290,13 @@ export const BACKEND_ENDPOINTS = {
       todo: implementationPendingTodo
     }
   },
+  sensor: {
+    toggleLid: {
+      method: 'POST',
+      path: '/api/Sensor/ToggleLid',
+      todo: implementationPendingTodo
+    }
+  },
   alert: {
     list: {
       method: 'GET',

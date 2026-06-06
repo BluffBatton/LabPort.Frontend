@@ -11,6 +11,12 @@
   max-width: 1120px;
 }
 
+.dashboard__actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
 .dashboard__header div {
   display: grid;
   gap: 8px;
@@ -104,7 +110,8 @@ mat-card-content strong {
 }
 
 @media (max-width: 700px) {
-  .dashboard__header {
+  .dashboard__header,
+  .dashboard__actions {
     display: grid;
   }
 
