@@ -1,17 +1,27 @@
-import { DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { DatePipe, DOCUMENT } from '@angular/common';
+import { Component, effect, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { DateAdapter, provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { MatTimepickerModule } from '@angular/material/timepicker';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 
-import { ContainerDto, SampleCreateDto, SampleDto, SampleUpdateDto, SourceDto } from '../../../core/api/api.models';
+import {
+  ContainerDto,
+  SampleCreateDto,
+  SampleDto,
+  SampleSearchParams,
+  SampleUpdateDto,
+  SourceDto
+} from '../../../core/api/api.models';
 import { LabApiService } from '../../../core/api/lab-api.service';
 import { LabportApiService } from '../../../core/api/labport-api.service';
 import { LocalizationService } from '../../../core/localization/localization.service';
@@ -23,13 +33,16 @@ import { LocalizationService } from '../../../core/localization/localization.ser
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
+    MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
+    MatTimepickerModule,
     ReactiveFormsModule
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './samples-page.html',
   styleUrl: './samples-page.scss'
 })
@@ -46,16 +59,29 @@ export class SamplesPage {
   readonly loadingDetailsId = signal<string | null>(null);
   readonly saving = signal(false);
   readonly deletingId = signal<string | null>(null);
+  readonly downloadingReportId = signal<string | null>(null);
   readonly errors = signal<string[]>([]);
   readonly message = signal<string | null>(null);
+
+  readonly searchForm = new FormGroup({
+    name: new FormControl('', { nonNullable: true }),
+    sourceId: new FormControl('', { nonNullable: true }),
+    sourceTypeName: new FormControl('', { nonNullable: true }),
+    dateFrom: new FormControl<Date | null>(null),
+    timeFrom: new FormControl<Date | null>(null),
+    dateTo: new FormControl<Date | null>(null),
+    timeTo: new FormControl<Date | null>(null)
+  });
 
   readonly form = new FormGroup({
     name: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required]
     }),
-    collectedAt: new FormControl('', {
-      nonNullable: true,
+    collectedAt: new FormControl<Date | null>(null, {
+      validators: [Validators.required]
+    }),
+    collectedTime: new FormControl<Date | null>(null, {
       validators: [Validators.required]
     }),
     sourceId: new FormControl('', {
@@ -64,8 +90,11 @@ export class SamplesPage {
   });
 
   private readonly labApi = inject(LabApiService);
+  private readonly document = inject(DOCUMENT);
+  private readonly dateAdapter = inject(DateAdapter<Date>);
 
   constructor() {
+    effect(() => this.dateAdapter.setLocale(this.i18n.dateLocale()));
     this.refresh();
   }
 
@@ -74,7 +103,7 @@ export class SamplesPage {
     this.errors.set([]);
 
     forkJoin({
-      samples: this.labApi.getSamples().pipe(
+      samples: this.labApi.searchSamples(this.searchPayload()).pipe(
         catchError((error: unknown) => {
           this.addError(this.i18n.t('samples.listTitle'), error);
           return of([] as SampleDto[]);
@@ -101,12 +130,33 @@ export class SamplesPage {
       });
   }
 
+  resetSearch(): void {
+    this.searchForm.reset({
+      name: '',
+      sourceId: '',
+      sourceTypeName: '',
+      dateFrom: null,
+      timeFrom: null,
+      dateTo: null,
+      timeTo: null
+    });
+    this.refresh();
+  }
+
+  sourceTypes(): readonly string[] {
+    return [...new Set(this.sources().map((source) => source.sourceTypeName).filter(Boolean) as string[])].sort(
+      (first, second) => this.i18n.compareText(first, second)
+    );
+  }
+
   startCreate(): void {
+    const now = new Date();
     this.selectedSample.set(null);
     this.message.set(null);
     this.form.reset({
       name: '',
-      collectedAt: this.toDateTimeLocal(new Date().toISOString()),
+      collectedAt: now,
+      collectedTime: now,
       sourceId: ''
     });
   }
@@ -116,7 +166,8 @@ export class SamplesPage {
     this.message.set(null);
     this.form.reset({
       name: sample.name ?? '',
-      collectedAt: this.toDateTimeLocal(sample.collectedAt),
+      collectedAt: this.toDate(sample.collectedAt),
+      collectedTime: this.toDate(sample.collectedAt),
       sourceId: sample.sourceId ?? ''
     });
   }
@@ -194,8 +245,41 @@ export class SamplesPage {
       });
   }
 
+  downloadSampleReport(sample: SampleDto | null): void {
+    if (!sample?.id) {
+      this.addError(this.i18n.t('samples.report'), new Error('Sample reference is missing.'));
+      return;
+    }
+
+    this.downloadingReportId.set(sample.id);
+    this.message.set(null);
+
+    this.labApi
+      .downloadSampleReportPdf(sample.id)
+      .pipe(finalize(() => this.downloadingReportId.set(null)))
+      .subscribe({
+        next: (blob) => {
+          this.downloadBlob(blob, this.reportFileName(sample));
+          this.message.set(this.i18n.t('samples.reportDownloaded'));
+        },
+        error: (error: unknown) => this.addError(this.i18n.t('samples.report'), error)
+      });
+  }
+
   endpointErrors(): readonly string[] {
     return this.errors();
+  }
+
+  private searchPayload(): SampleSearchParams {
+    const value = this.searchForm.getRawValue();
+
+    return {
+      name: value.name.trim() || null,
+      sourceId: value.sourceId || null,
+      sourceTypeName: value.sourceTypeName || null,
+      dateFrom: this.toIsoDate(value.dateFrom, 'start', value.timeFrom) || null,
+      dateTo: this.toIsoDate(value.dateTo, 'end', value.timeTo) || null
+    };
   }
 
   private createPayload(): SampleCreateDto {
@@ -204,7 +288,7 @@ export class SamplesPage {
 
     return {
       name: value.name.trim(),
-      collectedAt: this.toIsoDate(value.collectedAt),
+      collectedAt: this.toIsoDate(value.collectedAt, 'exact', value.collectedTime),
       ...(containerId ? { containerId } : {}),
       ...(value.sourceId ? { sourceId: value.sourceId } : {})
     };
@@ -215,7 +299,7 @@ export class SamplesPage {
 
     return {
       name: value.name.trim(),
-      collectedAt: this.toIsoDate(value.collectedAt),
+      collectedAt: this.toIsoDate(value.collectedAt, 'exact', value.collectedTime),
       sourceId: value.sourceId || null
     };
   }
@@ -232,23 +316,52 @@ export class SamplesPage {
     return 'Request failed';
   }
 
-  private toIsoDate(value: string): string {
-    const parsed = new Date(value);
-    return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString();
+  private downloadBlob(blob: Blob, fileName: string): void {
+    const url = globalThis.URL.createObjectURL(blob);
+    const anchor = this.document.createElement('a');
+    anchor.href = url;
+    anchor.download = fileName;
+    this.document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    globalThis.URL.revokeObjectURL(url);
   }
 
-  private toDateTimeLocal(value: string | undefined): string {
+  private reportFileName(sample: SampleDto): string {
+    const sampleName = (sample.name || 'sample').replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-|-$/g, '');
+    return `labport-${sampleName || 'sample'}-report.pdf`;
+  }
+
+  private toIsoDate(value: Date | string | null | undefined, boundary: 'exact' | 'start' | 'end' = 'exact', time?: Date | null): string {
     if (!value) {
       return '';
     }
 
-    const parsed = new Date(value);
+    const parsed = value instanceof Date ? new Date(value.getTime()) : new Date(value);
 
     if (Number.isNaN(parsed.getTime())) {
-      return '';
+      return typeof value === 'string' ? value : '';
     }
 
-    const timezoneOffset = parsed.getTimezoneOffset() * 60000;
-    return new Date(parsed.getTime() - timezoneOffset).toISOString().slice(0, 16);
+    if (time && !Number.isNaN(time.getTime())) {
+      parsed.setHours(time.getHours(), time.getMinutes(), 0, 0);
+    } else if (boundary === 'start') {
+      parsed.setHours(0, 0, 0, 0);
+    }
+
+    if (boundary === 'end') {
+      parsed.setHours(23, 59, 59, 999);
+    }
+
+    return parsed.toISOString();
+  }
+
+  private toDate(value: string | undefined): Date | null {
+    if (!value) {
+      return null;
+    }
+
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
   }
 }

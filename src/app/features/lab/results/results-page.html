@@ -3,7 +3,6 @@
     <div>
       <span>{{ i18n.t('common.lab') }}</span>
       <h2>{{ i18n.t('pages.results.title') }}</h2>
-      <p>{{ i18n.t('pages.results.description') }}</p>
     </div>
 
     <div class="page-actions">
@@ -25,7 +24,6 @@
     <mat-card appearance="outlined" class="table-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('results.listTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -84,7 +82,6 @@
     <mat-card appearance="outlined" class="form-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('results.createTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendAction') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -105,7 +102,16 @@
 
           <mat-form-field appearance="outline">
             <mat-label>{{ i18n.t('results.performedAt') }}</mat-label>
-            <input matInput type="datetime-local" formControlName="performedAt" />
+            <input matInput [matDatepicker]="performedAtPicker" formControlName="performedAt" />
+            <mat-datepicker-toggle matIconSuffix [for]="performedAtPicker" />
+            <mat-datepicker #performedAtPicker />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('results.performedTime') }}</mat-label>
+            <input matInput [matTimepicker]="performedTimePicker" formControlName="performedTime" />
+            <mat-timepicker-toggle matIconSuffix [for]="performedTimePicker" />
+            <mat-timepicker #performedTimePicker interval="15m" />
           </mat-form-field>
 
           <div class="value-grid">
@@ -159,7 +165,6 @@
     <mat-card appearance="outlined" class="details-card">
       <mat-card-header>
         <mat-card-title>{{ detailedResult()?.name || i18n.t('results.detailsTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <div class="detail-grid">

@@ -3,7 +3,6 @@
     <div>
       <span>{{ i18n.t('common.lab') }}</span>
       <h2>{{ i18n.t('pages.tests.title') }}</h2>
-      <p>{{ i18n.t('pages.tests.description') }}</p>
     </div>
 
     <div class="page-actions">
@@ -25,7 +24,6 @@
     <mat-card appearance="outlined" class="table-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('tests.listTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -89,9 +87,6 @@
         <mat-card-title>
           {{ selectedTest() ? i18n.t('tests.editTitle') : i18n.t('tests.createTitle') }}
         </mat-card-title>
-        <mat-card-subtitle>
-          {{ i18n.t('common.backendAction') }}
-        </mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -126,7 +121,16 @@
 
           <mat-form-field appearance="outline">
             <mat-label>{{ i18n.t('tests.testedAt') }}</mat-label>
-            <input matInput type="datetime-local" formControlName="testedAt" />
+            <input matInput [matDatepicker]="testedAtPicker" formControlName="testedAt" />
+            <mat-datepicker-toggle matIconSuffix [for]="testedAtPicker" />
+            <mat-datepicker #testedAtPicker />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('tests.testedTime') }}</mat-label>
+            <input matInput [matTimepicker]="testedTimePicker" formControlName="testedTime" />
+            <mat-timepicker-toggle matIconSuffix [for]="testedTimePicker" />
+            <mat-timepicker #testedTimePicker interval="15m" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -165,7 +169,6 @@
     <mat-card appearance="outlined" class="details-card">
       <mat-card-header>
         <mat-card-title>{{ detailedTest()?.subject || i18n.t('tests.detailsTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <div class="detail-grid">

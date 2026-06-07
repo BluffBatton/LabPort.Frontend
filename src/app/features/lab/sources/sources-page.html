@@ -3,7 +3,6 @@
     <div>
       <span>{{ i18n.t('common.lab') }}</span>
       <h2>{{ i18n.t('pages.sources.title') }}</h2>
-      <p>{{ i18n.t('pages.sources.description') }}</p>
     </div>
 
     <div class="page-actions">
@@ -25,7 +24,6 @@
     <mat-card appearance="outlined" class="table-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('sources.listTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -91,9 +89,6 @@
         <mat-card-title>
           {{ selectedSource() ? i18n.t('sources.editTitle') : i18n.t('sources.createTitle') }}
         </mat-card-title>
-        <mat-card-subtitle>
-          {{ i18n.t('common.backendAction') }}
-        </mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -143,7 +138,6 @@
     <mat-card appearance="outlined" class="details-card">
       <mat-card-header>
         <mat-card-title>{{ detailedSource()?.name || i18n.t('sources.detailsTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <div class="detail-grid">

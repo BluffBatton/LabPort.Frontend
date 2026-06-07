@@ -3,7 +3,6 @@
     <div>
       <span>{{ i18n.t('common.lab') }}</span>
       <h2>{{ i18n.t('pages.container.title') }}</h2>
-      <p>{{ i18n.t('pages.container.description') }}</p>
     </div>
 
     <div class="page-actions">
@@ -27,7 +26,6 @@
     <mat-card appearance="outlined" class="summary-card">
       <mat-card-header>
         <mat-card-title>{{ container()?.label || i18n.t('container.current') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -62,7 +60,9 @@
 
         <div class="context-panel">
           <strong>{{ i18n.t('container.latestReading') }}</strong>
-          <span>{{ latestReading() ? i18n.t('common.backendData') : i18n.t('container.noLatestReading') }}</span>
+          @if (!latestReading()) {
+            <span>{{ i18n.t('container.noLatestReading') }}</span>
+          }
         </div>
       </mat-card-content>
     </mat-card>
@@ -70,7 +70,6 @@
     <mat-card appearance="outlined" class="form-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('container.settingsTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendAction') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -110,6 +109,51 @@
       </mat-card-content>
     </mat-card>
   </div>
+
+  <mat-card appearance="outlined" class="sensor-card">
+    <mat-card-header>
+      <mat-card-title>{{ i18n.t('container.sensorTitle') }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="metric-grid">
+        <div>
+          <span>{{ i18n.t('container.sensorSerialName') }}</span>
+          <strong>{{ sensor()?.serialName || i18n.t('container.noSensor') }}</strong>
+        </div>
+        <div>
+          <span>{{ i18n.t('readings.lidPosition') }}</span>
+          <strong>{{ lidLabel(sensor()?.currentLidPosition || latestReading()?.lidPosition) }}</strong>
+        </div>
+      </div>
+
+      <form [formGroup]="sensorForm" (ngSubmit)="saveSensor()">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ i18n.t('container.sensorSerialName') }}</mat-label>
+          <input matInput formControlName="serialName" autocomplete="off" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ i18n.t('container.sensorDeviceKey') }}</mat-label>
+          <input matInput formControlName="deviceKey" autocomplete="off" />
+        </mat-form-field>
+
+        <div class="context-panel">
+          <strong>{{ i18n.t('container.sensorScope') }}</strong>
+          <span>{{ i18n.t('container.sensorScopeText') }}</span>
+        </div>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="button" (click)="resetSensorForm()">
+            {{ i18n.t('container.reset') }}
+          </button>
+          <button mat-flat-button type="submit" [disabled]="savingSensor() || sensorForm.invalid">
+            {{ savingSensor() ? i18n.t('container.saving') : i18n.t('container.sensorSave') }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
 
   @if (message()) {
     <mat-card appearance="outlined" class="success-card">

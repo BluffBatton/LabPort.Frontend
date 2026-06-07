@@ -3,7 +3,6 @@
     <div>
       <span>{{ i18n.t('common.admin') }}</span>
       <h2>{{ i18n.t('pages.dataManagement.title') }}</h2>
-      <p>{{ i18n.t('pages.dataManagement.description') }}</p>
     </div>
   </header>
 
@@ -21,12 +20,30 @@
           <div class="form-grid">
             <mat-form-field appearance="outline">
               <mat-label>{{ i18n.t('admin.users.from') }}</mat-label>
-              <input matInput type="datetime-local" formControlName="from" />
+              <input matInput [matDatepicker]="dataFromPicker" formControlName="from" />
+              <mat-datepicker-toggle matIconSuffix [for]="dataFromPicker" />
+              <mat-datepicker #dataFromPicker />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ i18n.t('admin.users.fromTime') }}</mat-label>
+              <input matInput [matTimepicker]="dataFromTimePicker" formControlName="fromTime" />
+              <mat-timepicker-toggle matIconSuffix [for]="dataFromTimePicker" />
+              <mat-timepicker #dataFromTimePicker interval="15m" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>{{ i18n.t('admin.users.to') }}</mat-label>
-              <input matInput type="datetime-local" formControlName="to" />
+              <input matInput [matDatepicker]="dataToPicker" formControlName="to" />
+              <mat-datepicker-toggle matIconSuffix [for]="dataToPicker" />
+              <mat-datepicker #dataToPicker />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ i18n.t('admin.users.toTime') }}</mat-label>
+              <input matInput [matTimepicker]="dataToTimePicker" formControlName="toTime" />
+              <mat-timepicker-toggle matIconSuffix [for]="dataToTimePicker" />
+              <mat-timepicker #dataToTimePicker interval="15m" />
             </mat-form-field>
           </div>
 
@@ -59,7 +76,6 @@
     <mat-card appearance="outlined" class="management-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('dataManagement.importTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendAction') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>

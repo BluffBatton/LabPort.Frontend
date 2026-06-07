@@ -6,7 +6,6 @@ export interface BackendEndpointDefinition {
   readonly todo: string;
 }
 
-const missingEndpointTodo = 'Server support is not available for this feature yet.';
 const implementationPendingTodo = 'This feature is available through the LabPort service.';
 
 export const BACKEND_ENDPOINTS = {
@@ -43,20 +42,10 @@ export const BACKEND_ENDPOINTS = {
       path: '/api/Sample/GetAllSamples',
       todo: implementationPendingTodo
     },
-    orders: {
-      method: 'GET',
-      path: null,
-      todo: missingEndpointTodo
-    },
     results: {
       method: 'GET',
       path: '/api/TestResult/GetAllTestResults',
       todo: implementationPendingTodo
-    },
-    reports: {
-      method: 'GET',
-      path: null,
-      todo: missingEndpointTodo
     }
   },
   admin: {
@@ -70,29 +59,14 @@ export const BACKEND_ENDPOINTS = {
       path: '/api/Admin/GetAllUsers',
       todo: implementationPendingTodo
     },
-    roles: {
-      method: 'GET',
-      path: null,
-      todo: missingEndpointTodo
-    },
     dictionaries: {
       method: 'GET',
       path: '/api/SourceType/GetAllSourceTypes',
       todo: implementationPendingTodo
     },
-    audit: {
-      method: 'GET',
-      path: null,
-      todo: missingEndpointTodo
-    },
     usersReport: {
       method: 'GET',
       path: '/api/Admin/ExportUsersReport/export/users',
-      todo: implementationPendingTodo
-    },
-    updateUserRole: {
-      method: 'PATCH',
-      path: '/api/Admin/UpdateUserRole/{id}',
       todo: implementationPendingTodo
     },
     deleteUser: {
@@ -167,6 +141,11 @@ export const BACKEND_ENDPOINTS = {
     list: {
       method: 'GET',
       path: '/api/Sample/GetAllSamples',
+      todo: implementationPendingTodo
+    },
+    search: {
+      method: 'GET',
+      path: '/api/Sample/SearchSamples/search',
       todo: implementationPendingTodo
     },
     byId: {
@@ -291,6 +270,36 @@ export const BACKEND_ENDPOINTS = {
     }
   },
   sensor: {
+    list: {
+      method: 'GET',
+      path: '/api/Sensor/GetAllSensor',
+      todo: implementationPendingTodo
+    },
+    my: {
+      method: 'GET',
+      path: '/api/Sensor/GetMySensor',
+      todo: implementationPendingTodo
+    },
+    byId: {
+      method: 'GET',
+      path: '/api/Sensor/GetSensorById/{id}',
+      todo: implementationPendingTodo
+    },
+    byDeviceKey: {
+      method: 'GET',
+      path: '/api/Sensor/GetByDeviceKey/GetByDeviceKey/{deviceKey}',
+      todo: implementationPendingTodo
+    },
+    create: {
+      method: 'POST',
+      path: '/api/Sensor/CreateSensor',
+      todo: implementationPendingTodo
+    },
+    update: {
+      method: 'PATCH',
+      path: '/api/Sensor/UpdateSensor',
+      todo: implementationPendingTodo
+    },
     toggleLid: {
       method: 'POST',
       path: '/api/Sensor/ToggleLid',
@@ -330,6 +339,16 @@ export const BACKEND_ENDPOINTS = {
     containerReadings: {
       method: 'GET',
       path: '/api/Statistics/GetContainerReadingsStats',
+      todo: implementationPendingTodo
+    },
+    sampleReportPdf: {
+      method: 'GET',
+      path: '/api/Statistics/GetSampleReportPdf/{sampleId}/report',
+      todo: implementationPendingTodo
+    },
+    userInfo: {
+      method: 'GET',
+      path: '/api/Statistics/GetUserInfoStatistics/{id}',
       todo: implementationPendingTodo
     }
   }

@@ -12,7 +12,6 @@
       @for (item of navItems; track item.path) {
         <a mat-list-item [routerLink]="item.path" routerLinkActive="active-link">
           <span matListItemTitle>{{ i18n.t(item.labelKey) }}</span>
-          <span matListItemLine>{{ i18n.t(item.captionKey) }}</span>
         </a>
       }
     </mat-nav-list>
@@ -36,9 +35,11 @@
         </mat-select>
       </mat-form-field>
 
-      <span class="session-label">
-        {{ sessionLabel() }}
-      </span>
+      @if (sessionLabel()) {
+        <span class="session-label">
+          {{ sessionLabel() }}
+        </span>
+      }
       <button mat-flat-button type="button" (click)="logout()">{{ i18n.t('common.logout') }}</button>
     </mat-toolbar>
 

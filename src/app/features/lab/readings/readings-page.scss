@@ -40,8 +40,7 @@
 }
 
 .page-actions,
-.loading-row,
-.form-actions {
+.loading-row {
   display: flex;
   gap: 10px;
   align-items: center;
@@ -73,17 +72,21 @@ mat-card-content {
   overflow: hidden;
 }
 
+.side-panel {
+  display: grid;
+  gap: 18px;
+  align-self: start;
+  position: sticky;
+  top: 16px;
+}
+
 table {
   width: 100%;
 }
 
-form {
-  display: grid;
-  gap: 14px;
-}
-
 .context-panel,
-.detail-grid div {
+.detail-grid div,
+.lid-status {
   display: grid;
   gap: 6px;
   padding: 12px;
@@ -92,26 +95,20 @@ form {
   background: var(--lp-surface-muted);
 }
 
-.form-actions {
-  justify-content: flex-end;
+.lid-status strong {
+  font-size: 30px;
+  font-weight: 700;
 }
 
 .details-card,
-.success-card,
 .error-card {
   max-width: 1280px;
 }
 
 .detail-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  grid-template-columns: 1fr;
   gap: 14px;
-}
-
-.success-card {
-  border-color: #b9d7d2;
-  background: #effaf7;
-  color: var(--lp-accent-strong);
 }
 
 .error-card {
@@ -133,5 +130,9 @@ form {
 
   .table-card {
     overflow-x: auto;
+  }
+
+  .side-panel {
+    position: static;
   }
 }

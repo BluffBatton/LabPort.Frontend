@@ -3,7 +3,6 @@
     <div>
       <span>{{ i18n.t('common.appName') }}</span>
       <h2>{{ i18n.t('pages.profile.title') }}</h2>
-      <p>{{ i18n.t('pages.profile.description') }}</p>
     </div>
 
     <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
@@ -22,7 +21,6 @@
     <mat-card appearance="outlined" class="summary-card">
       <mat-card-header>
         <mat-card-title>{{ fullName() }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
         <mat-card-content>
@@ -56,7 +54,6 @@
       <mat-card appearance="outlined" class="form-card">
         <mat-card-header>
           <mat-card-title>{{ i18n.t('profile.profileTitle') }}</mat-card-title>
-          <mat-card-subtitle>{{ i18n.t('common.backendAction') }}</mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>
@@ -98,7 +95,6 @@
     <mat-card appearance="outlined" class="form-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('profile.passwordTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendAction') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -125,7 +121,6 @@
     <mat-card appearance="outlined" class="danger-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('profile.deleteTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendAction') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>

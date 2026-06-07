@@ -17,7 +17,6 @@ import { SupportedLocale, TranslationKey } from '../../core/localization/transla
 interface NavItem {
   readonly path: string;
   readonly labelKey: TranslationKey;
-  readonly captionKey: TranslationKey;
 }
 
 @Component({
@@ -47,17 +46,15 @@ export class LabLayout {
   );
 
   readonly navItems: readonly NavItem[] = [
-    { path: '/lab/dashboard', labelKey: 'nav.lab.dashboard', captionKey: 'nav.lab.dashboard.caption' },
-    { path: '/lab/container', labelKey: 'nav.lab.container', captionKey: 'nav.lab.container.caption' },
-    { path: '/lab/readings', labelKey: 'nav.lab.readings', captionKey: 'nav.lab.readings.caption' },
-    { path: '/lab/alerts', labelKey: 'nav.lab.alerts', captionKey: 'nav.lab.alerts.caption' },
-    { path: '/lab/samples', labelKey: 'nav.lab.samples', captionKey: 'nav.lab.samples.caption' },
-    { path: '/lab/sources', labelKey: 'nav.lab.sources', captionKey: 'nav.lab.sources.caption' },
-    { path: '/lab/tests', labelKey: 'nav.lab.tests', captionKey: 'nav.lab.tests.caption' },
-    { path: '/lab/orders', labelKey: 'nav.lab.orders', captionKey: 'nav.lab.orders.caption' },
-    { path: '/lab/results', labelKey: 'nav.lab.results', captionKey: 'nav.lab.results.caption' },
-    { path: '/lab/reports', labelKey: 'nav.lab.reports', captionKey: 'nav.lab.reports.caption' },
-    { path: '/lab/profile', labelKey: 'nav.lab.profile', captionKey: 'nav.lab.profile.caption' }
+    { path: '/lab/dashboard', labelKey: 'nav.lab.dashboard' },
+    { path: '/lab/container', labelKey: 'nav.lab.container' },
+    { path: '/lab/readings', labelKey: 'nav.lab.readings' },
+    { path: '/lab/alerts', labelKey: 'nav.lab.alerts' },
+    { path: '/lab/samples', labelKey: 'nav.lab.samples' },
+    { path: '/lab/sources', labelKey: 'nav.lab.sources' },
+    { path: '/lab/tests', labelKey: 'nav.lab.tests' },
+    { path: '/lab/results', labelKey: 'nav.lab.results' },
+    { path: '/lab/profile', labelKey: 'nav.lab.profile' }
   ];
 
   private readonly router = inject(Router);
@@ -66,12 +63,12 @@ export class LabLayout {
     const profile = this.profile();
 
     if (profile) {
-      const fullName = [profile.firstName, profile.lastName].filter(Boolean).join(' ');
-      return fullName || profile.email || 'JWT session';
+      const fullName = this.uniqueName(profile.firstName, profile.lastName);
+      return fullName || profile.email || '';
     }
 
     const session = this.auth.session();
-    return session?.displayName ?? 'JWT session';
+    return session?.displayName ?? '';
   }
 
   setLocale(locale: SupportedLocale): void {
@@ -81,5 +78,14 @@ export class LabLayout {
   logout(): void {
     this.auth.logout();
     void this.router.navigate(['/auth/login']);
+  }
+
+  private uniqueName(firstName: string | null | undefined, lastName: string | null | undefined): string {
+    const parts = [firstName, lastName].filter(Boolean) as string[];
+    const uniqueParts = parts.filter((part, index) => {
+      return parts.findIndex((candidate) => candidate.localeCompare(part, undefined, { sensitivity: 'base' }) === 0) === index;
+    });
+
+    return uniqueParts.join(' ');
   }
 }

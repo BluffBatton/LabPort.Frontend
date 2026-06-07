@@ -279,10 +279,6 @@ export class AdminDictionariesPage {
     return this.i18n.t(this.pageTitleKey());
   }
 
-  pageDescription(): string {
-    return this.i18n.t(this.pageDescriptionKey());
-  }
-
   showSourceTypes(): boolean {
     return this.kind !== 'test';
   }
@@ -305,18 +301,6 @@ export class AdminDictionariesPage {
     }
 
     return 'pages.dictionaries.title';
-  }
-
-  private pageDescriptionKey(): TranslationKey {
-    if (this.kind === 'source') {
-      return 'pages.sourceTypes.description';
-    }
-
-    if (this.kind === 'test') {
-      return 'pages.testTypes.description';
-    }
-
-    return 'pages.dictionaries.description';
   }
 
   private dictionaryKind(): DictionaryKind {

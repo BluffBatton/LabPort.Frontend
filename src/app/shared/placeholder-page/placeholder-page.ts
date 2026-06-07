@@ -12,7 +12,6 @@ import { TranslationKey } from '../../core/localization/translations';
 interface PlaceholderRouteData {
   readonly eyebrowKey?: TranslationKey;
   readonly titleKey?: TranslationKey;
-  readonly descriptionKey?: TranslationKey;
   readonly endpointArea?: string;
   readonly endpointName?: string;
 }

@@ -81,6 +81,20 @@ form {
   gap: 14px;
 }
 
+.search-form {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: start;
+  margin-bottom: 16px;
+}
+
+.search-actions,
+.detail-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .context-panel,
 .detail-grid div {
   display: grid;

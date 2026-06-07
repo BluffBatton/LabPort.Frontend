@@ -25,10 +25,6 @@ export interface UserUpdateDto {
   readonly phoneNumber?: string | null;
 }
 
-export interface UserRoleUpdateDto {
-  readonly role: BackendRole;
-}
-
 export interface UserPasswordUpdateDto {
   readonly currentPassword?: string | null;
   readonly newPassword?: string | null;
@@ -57,6 +53,24 @@ export interface SensorReadingCreateDto {
   readonly temperature?: number | null;
   readonly humidity?: number | null;
   readonly lidPosition?: LidPosition | null;
+}
+
+export interface SensorDto {
+  readonly id?: string;
+  readonly serialName?: string | null;
+  readonly deviceKey?: string | null;
+  readonly currentLidPosition?: LidPosition;
+}
+
+export interface SensorCreateDto {
+  readonly serialName?: string | null;
+  readonly deviceKey?: string | null;
+  readonly containerId?: string;
+}
+
+export interface SensorUpdateDto {
+  readonly serialName?: string | null;
+  readonly deviceKey?: string | null;
 }
 
 export interface AlertDto {
@@ -163,6 +177,15 @@ export interface SampleUpdateDto {
   readonly name?: string | null;
   readonly collectedAt?: string | null;
   readonly sourceId?: string | null;
+}
+
+export interface SampleSearchParams {
+  readonly name?: string | null;
+  readonly sourceId?: string | null;
+  readonly sourceTypeName?: string | null;
+  readonly containerId?: string | null;
+  readonly dateFrom?: string | null;
+  readonly dateTo?: string | null;
 }
 
 export interface SourceDto {
@@ -276,6 +299,15 @@ export interface SettingsBackupImportResultDto {
   readonly skippedSourceTypes?: number;
   readonly createdTestTypes?: number;
   readonly skippedTestTypes?: number;
+}
+
+export interface AdminUserReportItemDto {
+  readonly userId?: string;
+  readonly email?: string | null;
+  readonly fullName?: string | null;
+  readonly samplesCount?: number;
+  readonly testsCount?: number;
+  readonly alertsCount?: number;
 }
 
 export interface TestResultDto {

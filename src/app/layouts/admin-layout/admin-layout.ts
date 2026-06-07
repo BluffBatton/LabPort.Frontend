@@ -17,7 +17,6 @@ import { SupportedLocale, TranslationKey } from '../../core/localization/transla
 interface NavItem {
   readonly path: string;
   readonly labelKey: TranslationKey;
-  readonly captionKey: TranslationKey;
 }
 
 @Component({
@@ -47,14 +46,12 @@ export class AdminLayout {
   );
 
   readonly navItems: readonly NavItem[] = [
-    { path: '/admin/dashboard', labelKey: 'nav.admin.dashboard', captionKey: 'nav.admin.dashboard.caption' },
-    { path: '/admin/users', labelKey: 'nav.admin.users', captionKey: 'nav.admin.users.caption' },
-    { path: '/admin/roles', labelKey: 'nav.admin.roles', captionKey: 'nav.admin.roles.caption' },
-    { path: '/admin/source-types', labelKey: 'nav.admin.sourceTypes', captionKey: 'nav.admin.sourceTypes.caption' },
-    { path: '/admin/test-types', labelKey: 'nav.admin.testTypes', captionKey: 'nav.admin.testTypes.caption' },
-    { path: '/admin/data-management', labelKey: 'nav.admin.dataManagement', captionKey: 'nav.admin.dataManagement.caption' },
-    { path: '/admin/audit', labelKey: 'nav.admin.audit', captionKey: 'nav.admin.audit.caption' },
-    { path: '/admin/profile', labelKey: 'nav.admin.profile', captionKey: 'nav.admin.profile.caption' }
+    { path: '/admin/dashboard', labelKey: 'nav.admin.dashboard' },
+    { path: '/admin/users', labelKey: 'nav.admin.users' },
+    { path: '/admin/source-types', labelKey: 'nav.admin.sourceTypes' },
+    { path: '/admin/test-types', labelKey: 'nav.admin.testTypes' },
+    { path: '/admin/data-management', labelKey: 'nav.admin.dataManagement' },
+    { path: '/admin/profile', labelKey: 'nav.admin.profile' }
   ];
 
   private readonly router = inject(Router);
@@ -63,12 +60,12 @@ export class AdminLayout {
     const profile = this.profile();
 
     if (profile) {
-      const fullName = [profile.firstName, profile.lastName].filter(Boolean).join(' ');
-      return fullName || profile.email || 'JWT session';
+      const fullName = this.uniqueName(profile.firstName, profile.lastName);
+      return fullName || profile.email || '';
     }
 
     const session = this.auth.session();
-    return session?.displayName ?? 'JWT session';
+    return session?.displayName ?? '';
   }
 
   setLocale(locale: SupportedLocale): void {
@@ -78,5 +75,14 @@ export class AdminLayout {
   logout(): void {
     this.auth.logout();
     void this.router.navigate(['/auth/login']);
+  }
+
+  private uniqueName(firstName: string | null | undefined, lastName: string | null | undefined): string {
+    const parts = [firstName, lastName].filter(Boolean) as string[];
+    const uniqueParts = parts.filter((part, index) => {
+      return parts.findIndex((candidate) => candidate.localeCompare(part, undefined, { sensitivity: 'base' }) === 0) === index;
+    });
+
+    return uniqueParts.join(' ');
   }
 }

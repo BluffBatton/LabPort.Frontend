@@ -1,14 +1,17 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { DateAdapter, provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { MatTimepickerModule } from '@angular/material/timepicker';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 
 import {
@@ -30,13 +33,16 @@ import { LocalizationService } from '../../../core/localization/localization.ser
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
+    MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
+    MatTimepickerModule,
     ReactiveFormsModule
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './tests-page.html',
   styleUrl: './tests-page.scss'
 })
@@ -69,9 +75,8 @@ export class TestsPage {
       nonNullable: true,
       validators: [Validators.required]
     }),
-    testedAt: new FormControl('', {
-      nonNullable: true
-    }),
+    testedAt: new FormControl<Date | null>(null),
+    testedTime: new FormControl<Date | null>(null),
     testStatus: new FormControl<TestStatus>('await', {
       nonNullable: true,
       validators: [Validators.required]
@@ -82,8 +87,10 @@ export class TestsPage {
   });
 
   private readonly labApi = inject(LabApiService);
+  private readonly dateAdapter = inject(DateAdapter<Date>);
 
   constructor() {
+    effect(() => this.dateAdapter.setLocale(this.i18n.dateLocale()));
     this.refresh();
   }
 
@@ -120,19 +127,22 @@ export class TestsPage {
   }
 
   startCreate(): void {
+    const now = new Date();
     this.selectedTest.set(null);
     this.message.set(null);
     this.form.reset({
       subject: '',
       sampleId: '',
       testTypeId: '',
-      testedAt: this.toDateTimeLocal(new Date().toISOString()),
+      testedAt: now,
+      testedTime: now,
       testStatus: 'await',
       comment: ''
     });
     this.form.controls.subject.enable();
     this.form.controls.sampleId.enable();
     this.form.controls.testedAt.enable();
+    this.form.controls.testedTime.enable();
   }
 
   editTest(test: TestDto): void {
@@ -142,13 +152,15 @@ export class TestsPage {
       subject: test.subject ?? '',
       sampleId: test.sampleId ?? '',
       testTypeId: test.testTypeId ?? '',
-      testedAt: this.toDateTimeLocal(test.testedAt),
+      testedAt: this.toDate(test.testedAt),
+      testedTime: this.toDate(test.testedAt),
       testStatus: test.testStatus ?? 'await',
       comment: test.comment ?? ''
     });
     this.form.controls.subject.disable();
     this.form.controls.sampleId.disable();
     this.form.controls.testedAt.disable();
+    this.form.controls.testedTime.disable();
   }
 
   loadDetails(test: TestDto): void {
@@ -207,7 +219,7 @@ export class TestsPage {
       sampleId: value.sampleId,
       testTypeId: value.testTypeId,
       subject: value.subject.trim(),
-      testedAt: value.testedAt ? this.toIsoDate(value.testedAt) : null,
+      testedAt: this.toIsoDate(value.testedAt, value.testedTime),
       comment: value.comment.trim() || null
     };
   }
@@ -234,23 +246,26 @@ export class TestsPage {
     return 'Request failed';
   }
 
-  private toIsoDate(value: string): string {
-    const parsed = new Date(value);
-    return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString();
+  private toIsoDate(value: Date | null | undefined, time?: Date | null): string | null {
+    if (!value) {
+      return null;
+    }
+
+    const parsed = new Date(value.getTime());
+
+    if (time && !Number.isNaN(time.getTime())) {
+      parsed.setHours(time.getHours(), time.getMinutes(), 0, 0);
+    }
+
+    return parsed.toISOString();
   }
 
-  private toDateTimeLocal(value: string | undefined): string {
+  private toDate(value: string | undefined): Date | null {
     if (!value) {
-      return '';
+      return null;
     }
 
     const parsed = new Date(value);
-
-    if (Number.isNaN(parsed.getTime())) {
-      return '';
-    }
-
-    const timezoneOffset = parsed.getTimezoneOffset() * 60000;
-    return new Date(parsed.getTime() - timezoneOffset).toISOString().slice(0, 16);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
   }
 }

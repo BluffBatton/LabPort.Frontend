@@ -1,12 +1,15 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { DateAdapter, provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTimepickerModule } from '@angular/material/timepicker';
 import { finalize } from 'rxjs';
 
 import { SettingsBackupDto, SettingsBackupImportResultDto } from '../../../core/api/api.models';
@@ -21,11 +24,14 @@ import { LocalizationService } from '../../../core/localization/localization.ser
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
+    MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatTimepickerModule,
     ReactiveFormsModule
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './admin-data-management-page.html',
   styleUrl: './admin-data-management-page.scss'
 })
@@ -42,12 +48,19 @@ export class AdminDataManagementPage {
   readonly message = signal<string | null>(null);
 
   readonly exportForm = new FormGroup({
-    from: new FormControl('', { nonNullable: true }),
-    to: new FormControl('', { nonNullable: true })
+    from: new FormControl<Date | null>(null),
+    fromTime: new FormControl<Date | null>(null),
+    to: new FormControl<Date | null>(null),
+    toTime: new FormControl<Date | null>(null)
   });
 
   private readonly adminApi = inject(AdminApiService);
   private readonly document = inject(DOCUMENT);
+  private readonly dateAdapter = inject(DateAdapter<Date>);
+
+  constructor() {
+    effect(() => this.dateAdapter.setLocale(this.i18n.dateLocale()));
+  }
 
   exportUsers(): void {
     const range = this.exportForm.getRawValue();
@@ -57,7 +70,7 @@ export class AdminDataManagementPage {
     this.errors.set([]);
 
     this.adminApi
-      .exportUsersReport(this.toIsoDate(range.from), this.toIsoDate(range.to))
+      .exportUsersReport(this.toIsoDate(range.from, 'start', range.fromTime), this.toIsoDate(range.to, 'end', range.toTime))
       .pipe(finalize(() => this.exportingUsers.set(false)))
       .subscribe({
         next: (blob) => {
@@ -142,8 +155,10 @@ export class AdminDataManagementPage {
 
   resetExportRange(): void {
     this.exportForm.reset({
-      from: '',
-      to: ''
+      from: null,
+      fromTime: null,
+      to: null,
+      toTime: null
     });
   }
 
@@ -170,13 +185,22 @@ export class AdminDataManagementPage {
     globalThis.URL.revokeObjectURL(url);
   }
 
-  private toIsoDate(value: string): string | undefined {
+  private toIsoDate(value: Date | null | undefined, boundary: 'start' | 'end', time?: Date | null): string | undefined {
     if (!value) {
       return undefined;
     }
 
-    const parsed = new Date(value);
-    return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString();
+    const parsed = new Date(value.getTime());
+
+    if (time && !Number.isNaN(time.getTime())) {
+      parsed.setHours(time.getHours(), time.getMinutes(), 0, 0);
+    } else if (boundary === 'start') {
+      parsed.setHours(0, 0, 0, 0);
+    } else {
+      parsed.setHours(23, 59, 59, 999);
+    }
+
+    return parsed.toISOString();
   }
 
   private addError(label: string, error: unknown): void {

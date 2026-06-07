@@ -168,7 +168,10 @@ export class ProfilePage {
 
   fullName(): string {
     const profile = this.profile();
-    const name = [profile?.firstName, profile?.lastName].filter(Boolean).join(' ');
+    const parts = [profile?.firstName, profile?.lastName].filter(Boolean) as string[];
+    const name = parts
+      .filter((part, index) => parts.findIndex((candidate) => candidate.localeCompare(part, undefined, { sensitivity: 'base' }) === 0) === index)
+      .join(' ');
     const session = this.auth.session();
     return name || profile?.email || session?.displayName || '-';
   }

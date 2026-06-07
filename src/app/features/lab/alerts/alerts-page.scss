@@ -42,9 +42,18 @@
 .loading-row,
 .row-actions {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   align-items: center;
-  flex-wrap: wrap;
+}
+
+.row-actions {
+  flex-wrap: nowrap;
+}
+
+.row-actions button {
+  min-width: auto;
+  height: 36px;
+  padding: 0 10px;
 }
 
 .content-grid {
@@ -71,6 +80,20 @@ mat-card-content {
 
 table {
   width: 100%;
+}
+
+th,
+td {
+  vertical-align: middle;
+}
+
+td.mat-column-message {
+  max-width: 360px;
+}
+
+td.mat-column-actions,
+th.mat-column-actions {
+  width: 260px;
 }
 
 .context-panel,

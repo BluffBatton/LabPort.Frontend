@@ -3,7 +3,6 @@
     <div>
       <span>{{ i18n.t('common.admin') }}</span>
       <h2>{{ pageTitle() }}</h2>
-      <p>{{ pageDescription() }}</p>
     </div>
 
     <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
@@ -23,7 +22,6 @@
     <mat-card appearance="outlined" class="dictionary-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.dictionaries.sourceTypes') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -87,7 +85,6 @@
     <mat-card appearance="outlined" class="dictionary-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.dictionaries.testTypes') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>

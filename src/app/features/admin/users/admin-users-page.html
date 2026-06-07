@@ -3,7 +3,6 @@
     <div>
       <span>{{ i18n.t('common.admin') }}</span>
       <h2>{{ i18n.t('pages.users.title') }}</h2>
-      <p>{{ i18n.t('pages.users.description') }}</p>
     </div>
 
     <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
@@ -22,7 +21,6 @@
     <mat-card appearance="outlined" class="table-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.users.listTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -45,19 +43,7 @@
 
             <ng-container matColumnDef="role">
               <th mat-header-cell *matHeaderCellDef>{{ i18n.t('admin.users.role') }}</th>
-              <td mat-cell *matCellDef="let user">
-                <mat-form-field class="role-field" appearance="outline" subscriptSizing="dynamic">
-                  <mat-select
-                    [value]="roleValue(user.role)"
-                    (selectionChange)="updateRole(user, $event.value)"
-                    [disabled]="updatingRoleId() === user.id || deletingUserId() === user.id"
-                  >
-                    @for (role of roleOptions; track role) {
-                      <mat-option [value]="role">{{ roleLabel(role) }}</mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </td>
+              <td mat-cell *matCellDef="let user">{{ roleLabel(roleValue(user.role)) }}</td>
             </ng-container>
 
             <ng-container matColumnDef="createdAt">
@@ -73,15 +59,29 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>{{ i18n.t('admin.users.actions') }}</th>
               <td mat-cell *matCellDef="let user">
-                <button
-                  mat-stroked-button
-                  type="button"
-                  color="warn"
-                  (click)="deleteUser(user)"
-                  [disabled]="deletingUserId() === user.id"
-                >
-                  {{ i18n.t('admin.users.deleteUser') }}
-                </button>
+                <div class="row-actions">
+                  <button
+                    mat-button
+                    type="button"
+                    (click)="loadUserStatistics(user)"
+                    [disabled]="loadingStatisticsId() === user.id"
+                  >
+                    {{
+                      loadingStatisticsId() === user.id
+                        ? i18n.t('admin.users.loadingStatistics')
+                        : i18n.t('admin.users.statistics')
+                    }}
+                  </button>
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    color="warn"
+                    (click)="deleteUser(user)"
+                    [disabled]="deletingUserId() === user.id"
+                  >
+                    {{ i18n.t('admin.users.deleteUser') }}
+                  </button>
+                </div>
               </td>
             </ng-container>
 
@@ -104,12 +104,30 @@
         <form [formGroup]="reportForm" (ngSubmit)="exportUsers()">
           <mat-form-field appearance="outline">
             <mat-label>{{ i18n.t('admin.users.from') }}</mat-label>
-            <input matInput type="datetime-local" formControlName="from" />
+            <input matInput [matDatepicker]="usersFromPicker" formControlName="from" />
+            <mat-datepicker-toggle matIconSuffix [for]="usersFromPicker" />
+            <mat-datepicker #usersFromPicker />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('admin.users.fromTime') }}</mat-label>
+            <input matInput [matTimepicker]="usersFromTimePicker" formControlName="fromTime" />
+            <mat-timepicker-toggle matIconSuffix [for]="usersFromTimePicker" />
+            <mat-timepicker #usersFromTimePicker interval="15m" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>{{ i18n.t('admin.users.to') }}</mat-label>
-            <input matInput type="datetime-local" formControlName="to" />
+            <input matInput [matDatepicker]="usersToPicker" formControlName="to" />
+            <mat-datepicker-toggle matIconSuffix [for]="usersToPicker" />
+            <mat-datepicker #usersToPicker />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('admin.users.toTime') }}</mat-label>
+            <input matInput [matTimepicker]="usersToTimePicker" formControlName="toTime" />
+            <mat-timepicker-toggle matIconSuffix [for]="usersToTimePicker" />
+            <mat-timepicker #usersToTimePicker interval="15m" />
           </mat-form-field>
 
           <div class="context-panel">
@@ -129,6 +147,32 @@
       </mat-card-content>
     </mat-card>
   </div>
+
+  @if (selectedStatistics()) {
+    <mat-card appearance="outlined" class="statistics-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t('admin.users.statisticsTitle') }}</mat-card-title>
+        <mat-card-subtitle>{{ selectedStatistics()?.fullName || selectedStatistics()?.email || '-' }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="stat-grid">
+          <div>
+            <span>{{ i18n.t('admin.users.samplesCount') }}</span>
+            <strong>{{ selectedStatistics()?.samplesCount ?? 0 }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('admin.users.testsCount') }}</span>
+            <strong>{{ selectedStatistics()?.testsCount ?? 0 }}</strong>
+          </div>
+          <div>
+            <span>{{ i18n.t('admin.users.alertsCount') }}</span>
+            <strong>{{ selectedStatistics()?.alertsCount ?? 0 }}</strong>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
 
   @if (message()) {
     <mat-card appearance="outlined" class="success-card">

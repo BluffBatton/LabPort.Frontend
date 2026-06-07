@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import {
+  AdminUserReportItemDto,
   AdminStatisticsDto,
   SettingsBackupDto,
   SettingsBackupImportResultDto,
@@ -12,7 +13,6 @@ import {
   TestTypeCreateDto,
   TestTypeDto,
   TestTypeUpdateDto,
-  UserRoleUpdateDto,
   UserDto
 } from './api.models';
 import { LabportApiService } from './labport-api.service';
@@ -32,14 +32,14 @@ export class AdminApiService {
     return this.http.get<UserDto[]>(this.api.endpointUrl('admin', 'users'));
   }
 
+  getUserInfoStatistics(id: string): Observable<AdminUserReportItemDto> {
+    return this.http.get<AdminUserReportItemDto>(this.api.endpointUrl('statistics', 'userInfo', { id }));
+  }
+
   exportUsersReport(from?: string | null, to?: string | null): Observable<Blob> {
     return this.http.get(this.api.endpointUrl('admin', 'usersReport', {}, { from, to }), {
       responseType: 'blob'
     });
-  }
-
-  updateUserRole(id: string, role: UserRoleUpdateDto): Observable<void> {
-    return this.http.patch<void>(this.api.endpointUrl('admin', 'updateUserRole', { id }), role);
   }
 
   deleteUser(id: string): Observable<void> {

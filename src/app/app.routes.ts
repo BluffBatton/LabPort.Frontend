@@ -64,30 +64,8 @@ export const routes: Routes = [
         loadComponent: () => import('./features/lab/tests/tests-page').then((m) => m.TestsPage)
       },
       {
-        path: 'orders',
-        loadComponent: () => import('./shared/placeholder-page/placeholder-page').then((m) => m.PlaceholderPage),
-        data: {
-          eyebrowKey: 'common.lab',
-          titleKey: 'pages.orders.title',
-          descriptionKey: 'pages.orders.description',
-          endpointArea: 'lab',
-          endpointName: 'orders'
-        }
-      },
-      {
         path: 'results',
         loadComponent: () => import('./features/lab/results/results-page').then((m) => m.ResultsPage)
-      },
-      {
-        path: 'reports',
-        loadComponent: () => import('./shared/placeholder-page/placeholder-page').then((m) => m.PlaceholderPage),
-        data: {
-          eyebrowKey: 'common.lab',
-          titleKey: 'pages.reports.title',
-          descriptionKey: 'pages.reports.description',
-          endpointArea: 'lab',
-          endpointName: 'reports'
-        }
       },
       {
         path: 'profile',
@@ -115,17 +93,6 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/users/admin-users-page').then((m) => m.AdminUsersPage)
       },
       {
-        path: 'roles',
-        loadComponent: () => import('./shared/placeholder-page/placeholder-page').then((m) => m.PlaceholderPage),
-        data: {
-          eyebrowKey: 'common.admin',
-          titleKey: 'pages.roles.title',
-          descriptionKey: 'pages.roles.description',
-          endpointArea: 'admin',
-          endpointName: 'roles'
-        }
-      },
-      {
         path: 'source-types',
         loadComponent: () => import('./features/admin/dictionaries/admin-dictionaries-page').then((m) => m.AdminDictionariesPage),
         data: {
@@ -149,17 +116,6 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/data-management/admin-data-management-page').then((m) => m.AdminDataManagementPage)
       },
       {
-        path: 'audit',
-        loadComponent: () => import('./shared/placeholder-page/placeholder-page').then((m) => m.PlaceholderPage),
-        data: {
-          eyebrowKey: 'common.admin',
-          titleKey: 'pages.audit.title',
-          descriptionKey: 'pages.audit.description',
-          endpointArea: 'admin',
-          endpointName: 'audit'
-        }
-      },
-      {
         path: 'profile',
         loadComponent: () => import('./features/account/profile-page/profile-page').then((m) => m.ProfilePage)
       }
@@ -170,8 +126,7 @@ export const routes: Routes = [
     loadComponent: () => import('./shared/placeholder-page/placeholder-page').then((m) => m.PlaceholderPage),
     data: {
       eyebrowKey: 'common.appName',
-      titleKey: 'pages.notFound.title',
-      descriptionKey: 'pages.notFound.description'
+      titleKey: 'pages.notFound.title'
     }
   }
 ];

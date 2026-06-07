@@ -36,7 +36,7 @@ export const environment = {
 };
 ```
 
-The frontend appends documented paths such as `/api/Auth/Login`, `/api/Sample/GetAllSamples`, `/api/SensorReading/GetAllSensorReadings/1`, and `/api/Sensor/ToggleLid`.
+The frontend appends documented paths such as `/api/Auth/Login`, `/api/Sample/SearchSamples/search`, `/api/SensorReading/GetAllSensorReadings/1`, and `/api/Sensor/ToggleLid`.
 
 ## Run Locally
 
@@ -55,9 +55,9 @@ npm run build
 ## Lab Assistant Features
 
 - JWT login and protected lab routes, with `/login` and `/auth/login` entry points.
-- Samples list, create, edit, delete, and details.
+- Samples backend search, create, edit, delete, details, and PDF report download.
 - Sources list, create, edit, delete, and details.
-- Container thresholds, latest sensor reading, IoT lid toggle, and dashboard reading range selector.
+- Container thresholds, IoT sensor registration/update, latest sensor reading, IoT lid toggle, and dashboard reading range selector.
 - Sensor readings list and create action.
 - Alerts list, details, mark-as-read, and delete actions.
 - Tests list, create, update status/comment/type, and details.
@@ -69,7 +69,7 @@ Technical IDs are kept only in TypeScript for routing, edit/delete actions, and 
 ## Admin Features
 
 - Protected admin layout with role guard.
-- Users table, role update, delete, and users CSV export.
+- Users table, user statistics, role update, delete, and users CSV export.
 - Test type create/edit/delete through Admin endpoints at `/admin/test-types`.
 - Source type create/edit/delete through Admin endpoints at `/admin/source-types`.
 - Admin statistics overview.
@@ -87,6 +87,5 @@ The selected language is stored in `localStorage`. Dates are formatted with `uk-
 ## Known Limitations
 
 - Full physical database backup/restore is not implemented; the frontend currently supports settings backup/import for source types and test types.
-- Lab orders and lab reports remain placeholders until matching backend endpoints exist.
 - Dedicated admin roles and audit-log pages remain placeholders until matching backend endpoints exist.
 - Sensor reading update/delete, test delete, and test result update/delete are not implemented because those backend endpoints are missing.

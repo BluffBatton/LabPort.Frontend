@@ -10,8 +10,12 @@ import {
   ReadingStatsRange,
   SensorReadingCreateDto,
   SensorReadingDto,
+  SensorCreateDto,
+  SensorDto,
+  SensorUpdateDto,
   SampleCreateDto,
   SampleDto,
+  SampleSearchParams,
   SampleUpdateDto,
   SourceCreateDto,
   SourceDto,
@@ -49,8 +53,18 @@ export class LabApiService {
     return this.http.get<SampleDto[]>(this.api.endpointUrl('sample', 'list'));
   }
 
+  searchSamples(search: SampleSearchParams): Observable<SampleDto[]> {
+    return this.http.get<SampleDto[]>(this.api.endpointUrl('sample', 'search', {}, { ...search }));
+  }
+
   getSampleById(id: string): Observable<SampleDto> {
     return this.http.get<SampleDto>(this.api.endpointUrl('sample', 'byId', { Id: id }));
+  }
+
+  downloadSampleReportPdf(sampleId: string): Observable<Blob> {
+    return this.http.get(this.api.endpointUrl('statistics', 'sampleReportPdf', { sampleId }), {
+      responseType: 'blob'
+    });
   }
 
   createSample(sample: SampleCreateDto): Observable<void> {
@@ -131,6 +145,30 @@ export class LabApiService {
 
   createSensorReading(sensorReading: SensorReadingCreateDto): Observable<void> {
     return this.http.post<void>(this.api.endpointUrl('sensorReading', 'create'), sensorReading);
+  }
+
+  getSensors(): Observable<SensorDto[]> {
+    return this.http.get<SensorDto[]>(this.api.endpointUrl('sensor', 'list'));
+  }
+
+  getMySensor(): Observable<SensorDto> {
+    return this.http.get<SensorDto>(this.api.endpointUrl('sensor', 'my'));
+  }
+
+  getSensorById(id: string): Observable<SensorDto> {
+    return this.http.get<SensorDto>(this.api.endpointUrl('sensor', 'byId', { id }));
+  }
+
+  getSensorByDeviceKey(deviceKey: string): Observable<SensorDto> {
+    return this.http.get<SensorDto>(this.api.endpointUrl('sensor', 'byDeviceKey', { deviceKey }));
+  }
+
+  createSensor(sensor: SensorCreateDto): Observable<void> {
+    return this.http.post<void>(this.api.endpointUrl('sensor', 'create'), sensor);
+  }
+
+  updateSensor(sensor: SensorUpdateDto): Observable<void> {
+    return this.http.patch<void>(this.api.endpointUrl('sensor', 'update'), sensor);
   }
 
   toggleLid(): Observable<void> {

@@ -3,7 +3,6 @@
     <div>
       <span>{{ i18n.t('common.lab') }}</span>
       <h2>{{ i18n.t('pages.samples.title') }}</h2>
-      <p>{{ i18n.t('pages.samples.description') }}</p>
     </div>
 
     <div class="page-actions">
@@ -25,10 +24,69 @@
     <mat-card appearance="outlined" class="table-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('samples.listTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
+        <form class="search-form" [formGroup]="searchForm" (ngSubmit)="refresh()">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('samples.searchName') }}</mat-label>
+            <input matInput formControlName="name" autocomplete="off" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('samples.source') }}</mat-label>
+            <mat-select formControlName="sourceId">
+              <mat-option value="">{{ i18n.t('samples.anySource') }}</mat-option>
+              @for (source of sources(); track source.id) {
+                <mat-option [value]="source.id">{{ source.name || i18n.t('sources.unnamed') }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('samples.sourceType') }}</mat-label>
+            <mat-select formControlName="sourceTypeName">
+              <mat-option value="">{{ i18n.t('samples.anySourceType') }}</mat-option>
+              @for (sourceType of sourceTypes(); track sourceType) {
+                <mat-option [value]="sourceType">{{ sourceType }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('samples.dateFrom') }}</mat-label>
+            <input matInput [matDatepicker]="dateFromPicker" formControlName="dateFrom" />
+            <mat-datepicker-toggle matIconSuffix [for]="dateFromPicker" />
+            <mat-datepicker #dateFromPicker />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('samples.timeFrom') }}</mat-label>
+            <input matInput [matTimepicker]="timeFromPicker" formControlName="timeFrom" />
+            <mat-timepicker-toggle matIconSuffix [for]="timeFromPicker" />
+            <mat-timepicker #timeFromPicker interval="15m" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('samples.dateTo') }}</mat-label>
+            <input matInput [matDatepicker]="dateToPicker" formControlName="dateTo" />
+            <mat-datepicker-toggle matIconSuffix [for]="dateToPicker" />
+            <mat-datepicker #dateToPicker />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('samples.timeTo') }}</mat-label>
+            <input matInput [matTimepicker]="timeToPicker" formControlName="timeTo" />
+            <mat-timepicker-toggle matIconSuffix [for]="timeToPicker" />
+            <mat-timepicker #timeToPicker interval="15m" />
+          </mat-form-field>
+
+          <div class="search-actions">
+            <button mat-stroked-button type="button" (click)="resetSearch()">{{ i18n.t('samples.clearSearch') }}</button>
+            <button mat-flat-button type="submit" [disabled]="loading()">{{ i18n.t('samples.search') }}</button>
+          </div>
+        </form>
+
         @if (samples().length) {
           <table mat-table [dataSource]="samples()">
             <ng-container matColumnDef="name">
@@ -91,9 +149,6 @@
         <mat-card-title>
           {{ selectedSample() ? i18n.t('samples.editTitle') : i18n.t('samples.createTitle') }}
         </mat-card-title>
-        <mat-card-subtitle>
-          {{ i18n.t('common.backendAction') }}
-        </mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -105,7 +160,16 @@
 
           <mat-form-field appearance="outline">
             <mat-label>{{ i18n.t('samples.collectedAt') }}</mat-label>
-            <input matInput type="datetime-local" formControlName="collectedAt" />
+            <input matInput [matDatepicker]="collectedAtPicker" formControlName="collectedAt" />
+            <mat-datepicker-toggle matIconSuffix [for]="collectedAtPicker" />
+            <mat-datepicker #collectedAtPicker />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ i18n.t('samples.collectedTime') }}</mat-label>
+            <input matInput [matTimepicker]="collectedTimePicker" formControlName="collectedTime" />
+            <mat-timepicker-toggle matIconSuffix [for]="collectedTimePicker" />
+            <mat-timepicker #collectedTimePicker interval="15m" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -138,7 +202,6 @@
     <mat-card appearance="outlined" class="details-card">
       <mat-card-header>
         <mat-card-title>{{ detailedSample()?.name || i18n.t('samples.detailsTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <div class="detail-grid">
@@ -154,6 +217,21 @@
             <span>{{ i18n.t('samples.owner') }}</span>
             <strong>{{ detailedSample()?.containerOwnerFullName || '-' }}</strong>
           </div>
+        </div>
+
+        <div class="detail-actions">
+          <button
+            mat-flat-button
+            type="button"
+            (click)="downloadSampleReport(detailedSample())"
+            [disabled]="downloadingReportId() === detailedSample()?.id"
+          >
+            {{
+              downloadingReportId() === detailedSample()?.id
+                ? i18n.t('samples.downloadingReport')
+                : i18n.t('samples.report')
+            }}
+          </button>
         </div>
       </mat-card-content>
     </mat-card>

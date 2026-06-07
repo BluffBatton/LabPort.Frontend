@@ -3,7 +3,6 @@
     <div>
       <span>{{ i18n.t('common.admin') }}</span>
       <h2>{{ i18n.t('pages.adminDashboard.title') }}</h2>
-      <p>{{ i18n.t('pages.adminDashboard.description') }}</p>
     </div>
 
     <div class="page-actions">
@@ -33,7 +32,6 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.dashboard.totalUsers') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ metric(stats()?.totalUsers) }}</strong>
@@ -43,7 +41,6 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.dashboard.activeUsers') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('admin.dashboard.window') }}: {{ metric(stats()?.daysWindow) }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ metric(stats()?.activeUsersLastNDays) }}</strong>
@@ -53,7 +50,6 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.dashboard.totalSamples') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ metric(stats()?.totalSamples) }}</strong>
@@ -63,7 +59,6 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.dashboard.totalTests') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ metric(stats()?.totalTests) }}</strong>
@@ -73,7 +68,6 @@
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('admin.dashboard.totalAlerts') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <strong>{{ metric(stats()?.totalAlerts) }}</strong>

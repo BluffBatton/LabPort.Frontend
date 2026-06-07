@@ -1,14 +1,17 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { DateAdapter, provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { MatTimepickerModule } from '@angular/material/timepicker';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 
 import { ResultStatus, TestDto, TestResultCreateDto, TestResultDto } from '../../../core/api/api.models';
@@ -23,13 +26,16 @@ import { LocalizationService } from '../../../core/localization/localization.ser
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
+    MatDatepickerModule,
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
+    MatTimepickerModule,
     ReactiveFormsModule
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './results-page.html',
   styleUrl: './results-page.scss'
 })
@@ -56,9 +62,8 @@ export class ResultsPage {
       nonNullable: true,
       validators: [Validators.required]
     }),
-    performedAt: new FormControl('', {
-      nonNullable: true
-    }),
+    performedAt: new FormControl<Date | null>(null),
+    performedTime: new FormControl<Date | null>(null),
     valueNumeric: new FormControl<number | null>(null),
     valueText: new FormControl('', {
       nonNullable: true
@@ -76,8 +81,10 @@ export class ResultsPage {
   });
 
   private readonly labApi = inject(LabApiService);
+  private readonly dateAdapter = inject(DateAdapter<Date>);
 
   constructor() {
+    effect(() => this.dateAdapter.setLocale(this.i18n.dateLocale()));
     this.refresh();
     this.resetForm();
   }
@@ -108,11 +115,13 @@ export class ResultsPage {
   }
 
   resetForm(): void {
+    const now = new Date();
     this.message.set(null);
     this.form.reset({
       testId: '',
       name: '',
-      performedAt: this.toDateTimeLocal(new Date().toISOString()),
+      performedAt: now,
+      performedTime: now,
       valueNumeric: null,
       valueText: '',
       unit: '',
@@ -182,7 +191,7 @@ export class ResultsPage {
     return {
       testId: value.testId,
       name: value.name.trim(),
-      performedAt: value.performedAt ? this.toIsoDate(value.performedAt) : null,
+      performedAt: this.toIsoDate(value.performedAt, value.performedTime),
       valueNumeric: value.valueNumeric,
       valueText: value.valueText.trim() || null,
       unit: value.unit.trim() || null,
@@ -203,23 +212,17 @@ export class ResultsPage {
     return 'Request failed';
   }
 
-  private toIsoDate(value: string): string {
-    const parsed = new Date(value);
-    return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString();
-  }
-
-  private toDateTimeLocal(value: string | undefined): string {
+  private toIsoDate(value: Date | null | undefined, time?: Date | null): string | null {
     if (!value) {
-      return '';
+      return null;
     }
 
-    const parsed = new Date(value);
+    const parsed = new Date(value.getTime());
 
-    if (Number.isNaN(parsed.getTime())) {
-      return '';
+    if (time && !Number.isNaN(time.getTime())) {
+      parsed.setHours(time.getHours(), time.getMinutes(), 0, 0);
     }
 
-    const timezoneOffset = parsed.getTimezoneOffset() * 60000;
-    return new Date(parsed.getTime() - timezoneOffset).toISOString().slice(0, 16);
+    return parsed.toISOString();
   }
 }

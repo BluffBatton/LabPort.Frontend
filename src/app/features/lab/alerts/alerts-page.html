@@ -3,7 +3,6 @@
     <div>
       <span>{{ i18n.t('common.lab') }}</span>
       <h2>{{ i18n.t('pages.alerts.title') }}</h2>
-      <p>{{ i18n.t('pages.alerts.description') }}</p>
     </div>
 
     <button mat-flat-button type="button" (click)="refresh()" [disabled]="loading()">
@@ -22,7 +21,6 @@
     <mat-card appearance="outlined" class="table-card">
       <mat-card-header>
         <mat-card-title>{{ i18n.t('alerts.listTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
@@ -90,7 +88,6 @@
     <mat-card appearance="outlined" class="details-card">
       <mat-card-header>
         <mat-card-title>{{ selectedAlert()?.message || i18n.t('alerts.detailsTitle') }}</mat-card-title>
-        <mat-card-subtitle>{{ i18n.t('common.backendData') }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         @if (selectedAlert()) {
