@@ -68,7 +68,7 @@ mat-card-content {
 
 table {
   width: 100%;
-  min-width: 900px;
+  min-width: 1120px;
   table-layout: fixed;
 }
 
@@ -95,7 +95,9 @@ table {
 }
 
 .mat-column-actions {
-  width: 190px;
+  width: 210px;
+  background: var(--lp-surface);
+  border-left: 1px solid var(--lp-border);
 }
 
 form {
@@ -118,11 +120,14 @@ form {
 
 .row-actions {
   justify-content: flex-start;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  gap: 6px;
 }
 
 .row-actions button {
   min-width: 0;
+  padding-inline: 12px;
+  white-space: nowrap;
 }
 
 .statistics-card {

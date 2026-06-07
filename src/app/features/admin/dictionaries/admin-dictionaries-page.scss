@@ -39,6 +39,7 @@
 }
 
 .loading-row,
+.row-actions,
 .form-actions {
   display: flex;
   gap: 10px;
@@ -69,6 +70,23 @@ mat-card-content {
 
 table {
   width: 100%;
+  table-layout: fixed;
+}
+
+.mat-column-name {
+  width: 24%;
+}
+
+.mat-column-range {
+  width: 38%;
+}
+
+.mat-column-unit {
+  width: 14%;
+}
+
+.mat-column-actions {
+  width: 220px;
 }
 
 .inline-form,
@@ -88,6 +106,18 @@ table {
 
 .form-actions {
   justify-content: flex-end;
+}
+
+.row-actions {
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+
+.row-actions button {
+  min-width: 0;
+  padding-inline: 12px;
+  white-space: nowrap;
 }
 
 .context-panel {

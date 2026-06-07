@@ -1,7 +1,6 @@
 <section class="admin-users-page">
   <header class="page-heading">
     <div>
-      <span>{{ i18n.t('common.admin') }}</span>
       <h2>{{ i18n.t('pages.users.title') }}</h2>
     </div>
 
@@ -56,7 +55,7 @@
               <td mat-cell *matCellDef="let user">{{ user.lastLoginAt ? (user.lastLoginAt | date: 'medium' : undefined : i18n.dateLocale()) : '-' }}</td>
             </ng-container>
 
-            <ng-container matColumnDef="actions">
+            <ng-container matColumnDef="actions" stickyEnd>
               <th mat-header-cell *matHeaderCellDef>{{ i18n.t('admin.users.actions') }}</th>
               <td mat-cell *matCellDef="let user">
                 <div class="row-actions">
@@ -79,7 +78,7 @@
                     (click)="deleteUser(user)"
                     [disabled]="deletingUserId() === user.id"
                   >
-                    {{ i18n.t('admin.users.deleteUser') }}
+                    {{ i18n.t('admin.users.deleteShort') }}
                   </button>
                 </div>
               </td>

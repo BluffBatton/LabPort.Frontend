@@ -109,8 +109,21 @@ export class AdminDictionariesPage {
     })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe(({ sourceTypes, testTypes }) => {
-        this.sourceTypes.set([...sourceTypes].sort((first, second) => this.i18n.compareText(first.name, second.name)));
-        this.testTypes.set([...testTypes].sort((first, second) => this.i18n.compareText(first.name, second.name)));
+        this.sourceTypes.set(
+          this.uniqueBy(sourceTypes, (sourceType) => this.normalizeKey(sourceType.name)).sort((first, second) =>
+            this.i18n.compareText(first.name, second.name)
+          )
+        );
+        this.testTypes.set(
+          this.uniqueBy(testTypes, (testType) =>
+            [
+              this.normalizeKey(testType.name),
+              this.numericKey(testType.referenceMin),
+              this.numericKey(testType.referenceMax),
+              this.normalizeKey(testType.unit)
+            ].join('|')
+          ).sort((first, second) => this.i18n.compareText(first.name, second.name))
+        );
       });
   }
 
@@ -341,5 +354,27 @@ export class AdminDictionariesPage {
 
   private errorMessage(error: unknown): string {
     return readableApiError(error);
+  }
+
+  private uniqueBy<T>(items: readonly T[], keySelector: (item: T) => string): T[] {
+    const seen = new Set<string>();
+    return items.filter((item) => {
+      const key = keySelector(item);
+
+      if (seen.has(key)) {
+        return false;
+      }
+
+      seen.add(key);
+      return true;
+    });
+  }
+
+  private normalizeKey(value: string | null | undefined): string {
+    return (value ?? '').trim().toLocaleLowerCase(this.i18n.dateLocale());
+  }
+
+  private numericKey(value: number | null | undefined): string {
+    return typeof value === 'number' ? String(value) : '';
   }
 }

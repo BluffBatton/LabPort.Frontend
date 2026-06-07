@@ -114,10 +114,6 @@ export const routes: Routes = [
       {
         path: 'data-management',
         loadComponent: () => import('./features/admin/data-management/admin-data-management-page').then((m) => m.AdminDataManagementPage)
-      },
-      {
-        path: 'profile',
-        loadComponent: () => import('./features/account/profile-page/profile-page').then((m) => m.ProfilePage)
       }
     ]
   },

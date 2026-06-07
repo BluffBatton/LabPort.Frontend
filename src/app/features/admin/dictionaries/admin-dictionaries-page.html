@@ -1,7 +1,6 @@
 <section class="admin-dictionaries-page">
   <header class="page-heading">
     <div>
-      <span>{{ i18n.t('common.admin') }}</span>
       <h2>{{ pageTitle() }}</h2>
     </div>
 
@@ -57,17 +56,19 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>{{ i18n.t('admin.dictionaries.actions') }}</th>
               <td mat-cell *matCellDef="let sourceType">
-                <button mat-stroked-button type="button" (click)="editSourceType(sourceType)">
-                  {{ i18n.t('admin.dictionaries.edit') }}
-                </button>
-                <button
-                  mat-stroked-button
-                  type="button"
-                  (click)="deleteSourceType(sourceType)"
-                  [disabled]="deletingSourceTypeId() === sourceType.id"
-                >
-                  {{ i18n.t('admin.dictionaries.delete') }}
-                </button>
+                <div class="row-actions">
+                  <button mat-stroked-button type="button" (click)="editSourceType(sourceType)">
+                    {{ i18n.t('admin.dictionaries.edit') }}
+                  </button>
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    (click)="deleteSourceType(sourceType)"
+                    [disabled]="deletingSourceTypeId() === sourceType.id"
+                  >
+                    {{ i18n.t('admin.dictionaries.delete') }}
+                  </button>
+                </div>
               </td>
             </ng-container>
 
@@ -147,17 +148,19 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>{{ i18n.t('admin.dictionaries.actions') }}</th>
               <td mat-cell *matCellDef="let testType">
-                <button mat-stroked-button type="button" (click)="editTestType(testType)">
-                  {{ i18n.t('admin.dictionaries.edit') }}
-                </button>
-                <button
-                  mat-stroked-button
-                  type="button"
-                  (click)="deleteTestType(testType)"
-                  [disabled]="deletingTestTypeId() === testType.id"
-                >
-                  {{ i18n.t('admin.dictionaries.delete') }}
-                </button>
+                <div class="row-actions">
+                  <button mat-stroked-button type="button" (click)="editTestType(testType)">
+                    {{ i18n.t('admin.dictionaries.edit') }}
+                  </button>
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    (click)="deleteTestType(testType)"
+                    [disabled]="deletingTestTypeId() === testType.id"
+                  >
+                    {{ i18n.t('admin.dictionaries.delete') }}
+                  </button>
+                </div>
               </td>
             </ng-container>
 

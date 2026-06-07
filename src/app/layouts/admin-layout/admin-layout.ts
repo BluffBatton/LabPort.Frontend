@@ -50,8 +50,7 @@ export class AdminLayout {
     { path: '/admin/users', labelKey: 'nav.admin.users' },
     { path: '/admin/source-types', labelKey: 'nav.admin.sourceTypes' },
     { path: '/admin/test-types', labelKey: 'nav.admin.testTypes' },
-    { path: '/admin/data-management', labelKey: 'nav.admin.dataManagement' },
-    { path: '/admin/profile', labelKey: 'nav.admin.profile' }
+    { path: '/admin/data-management', labelKey: 'nav.admin.dataManagement' }
   ];
 
   private readonly router = inject(Router);
